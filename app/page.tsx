@@ -63,11 +63,11 @@ const PartitionTree = () => {
     }
   };
 
-  const updateNode = (children: any[], target: any, newChildren: any[]) => {
+  const updateNode = (children: any[], target: any, newChildren: any[]): any[] => {
     return children.map((child) => {
       if (child === target) return { ...child, children: newChildren };
       if (child.children) return { ...child, children: updateNode(child.children, target, newChildren) };
-      return child;
+      return child; // Ensure every child is returned
     });
   };
 
