@@ -42,10 +42,10 @@ const PartitionTree = () => {
       .data(hierarchy.links())
       .enter()
       .append("line")
-      .attr("x1", (d) => d.source.x + 50)
-      .attr("y1", (d) => d.source.y + 50)
-      .attr("x2", (d) => d.target.x + 50)
-      .attr("y2", (d) => d.target.y + 50)
+      .attr("x1", (d) => (d.source?.x ?? 0) + 50)
+      .attr("y1", (d) => (d.source?.y ?? 0) + 50)
+      .attr("x2", (d) => (d.target?.x ?? 0) + 50)
+      .attr("y2", (d) => (d.target?.y ?? 0) + 50)
       .attr("stroke", "#999");
 
     const nodes = svg.selectAll(".node")
