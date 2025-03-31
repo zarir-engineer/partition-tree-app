@@ -52,7 +52,7 @@ const PartitionTree = () => {
       .data(hierarchy.descendants())
       .enter()
       .append("g")
-      .attr("transform", (d) => `translate(${d.x + 50}, ${d.y + 50})`);
+      .attr("transform", (d) => `translate(${(d.x ?? 0) + 50}, ${(d.y ?? 0) + 50})`);
 
     nodes.append("circle")
       .attr("r", 20)
