@@ -15,6 +15,25 @@ const TreeComponent = () => {
     children: Array(8).fill({ value: 1 / 8, children: [] }),
   });
 
+  // Function to adjust node values
+  const adjustNodeValue = (index: number, value: number) => {
+    const newChildren = [...data.children];
+    newChildren[index].value = value;
+    const total = newChildren.reduce((sum, child) => sum + child.value, 0);
+    // Normalize the other children to make the sum equal to 1
+    if (total !== 1) {
+      newChildren.forEach((child, idx) => {
+        if (idx !== index) {
+          child.value = (1 - value) / (newChildren.length - 1);
+        }
+      });
+    }
+    setData({
+      ...data,
+      children: newChildren,
+    });
+  };
+
   // Function to add a child node
   const addChildNode = () => {
     const newChild = { value: 0, children: [] };
