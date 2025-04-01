@@ -12,7 +12,7 @@ type Node = {
 const TreeComponent = () => {
   const [data, setData] = useState<Node>({
     value: 66.67,  // Root node value
-    children: Array(8).fill({ value: 1 / 8, children: [] }),  // Initial children with equal value
+    children: [],  // Initially no children
   });
 
   // Function to adjust node values
@@ -84,7 +84,7 @@ const TreeComponent = () => {
       </div>
 
       <div className="d-flex justify-content-center flex-wrap">
-        {/* Render child nodes */}
+        {/* Render child nodes dynamically */}
         {data.children.map((child, parentIndex) => (
           <div key={parentIndex} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
             {/* Parent node */}
