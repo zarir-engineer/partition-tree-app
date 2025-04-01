@@ -4,67 +4,44 @@ import { Container } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './styles/FractionNodeApp.module.css';
 
-type Node = {
-  value: number;
-  fraction: string;
-  children: Node[];
-};
-
-const TreeComponent = () => {
-  const [data, setData] = useState<Node>({
-    value: 1,
-    fraction: "1",
-    children: Array(8).fill({
-      value: 0.125,
-      fraction: "1/8",
-      children: []
-    }),
+const FractionNodeApp = () => {
+  const [data, setData] = useState<any>({
+    value: 66.67, // Root node value as 66.67
+    children: Array(8).fill({ value: 8.33, children: [] }), // 8 child nodes with initial value 8.33 (66.67 / 8)
   });
 
   // Function to adjust node values
-  const adjustNodeValue = (index: number, value: number) => {
+  const adjustNodeValue = (index: number, value: number, parentIndex: number) => {
     const newChildren = [...data.children];
-    newChildren[index].value = value;
-    newChildren[index].fraction = `1/${(1 / value).toFixed(2)}`;
+    newChildren[parentIndex].children[index].value = value;
 
-    const total = newChildren.reduce((sum, child) => sum + child.value, 0);
-    if (total !== 1) {
-      newChildren.forEach((child, idx) => {
+    // Normalize the other children values to make sure the sum stays the same
+    const total = newChildren[parentIndex].children.reduce((sum, child) => sum + child.value, 0);
+    if (total !== newChildren[parentIndex].value) {
+      newChildren[parentIndex].children.forEach((child, idx) => {
         if (idx !== index) {
-          child.value = (1 - value) / (newChildren.length - 1);
-          child.fraction = `1/${(1 / child.value).toFixed(2)}`;
+          child.value = (newChildren[parentIndex].value - value) / (newChildren[parentIndex].children.length - 1);
         }
       });
     }
-
-    setData({
-      ...data,
-      children: newChildren,
-    });
+    setData({ ...data, children: newChildren });
   };
 
+  // Function to add a new child node to a parent node
   const addChildNode = (index: number) => {
+    const newNode = { value: 8.33, children: [] };
     const newChildren = [...data.children];
-    const parentValue = newChildren[index].value;
-    const newValue = (parentValue + 0.01).toFixed(2);
-    const newChild: Node = {
-      value: parseFloat(newValue),
-      fraction: `1/${(1 / parseFloat(newValue)).toFixed(2)}`,
-      children: [],
-    };
-
-    newChildren[index].children.push(newChild);
-    newChildren[index].value = parseFloat(newValue);
-
+    newChildren[index].children.push(newNode); // Add child node
     setData({
       ...data,
       children: newChildren,
     });
   };
 
-  const removeChildNode = (parentIndex: number, childIndex: number) => {
+  // Function to remove a child node
+  const removeChildNode = (index: number, parentIndex: number) => {
     const newChildren = [...data.children];
-    newChildren[parentIndex].children.splice(childIndex, 1);
+    newChildren[parentIndex].children.splice(index, 1);
     setData({
       ...data,
       children: newChildren,
@@ -91,15 +68,14 @@ const TreeComponent = () => {
             position: 'relative',
           }}
         >
-          {data.fraction}
+          {data.value.toFixed(2)}
         </div>
       </div>
 
-      <div className="d-flex justify-content-center flex-wrap" style={{ gap: '30px' }}>
-        {/* Render child nodes dynamically */}
+      <div className="d-flex justify-content-center flex-wrap">
+        {/* Child nodes */}
         {data.children.map((child, parentIndex) => (
-          <div key={parentIndex} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
-            {/* Parent node */}
+          <div key={parentIndex} className="d-flex justify-content-center my-3">
             <div
               className={styles.node}
               style={{
@@ -116,82 +92,122 @@ const TreeComponent = () => {
                 position: 'relative',
               }}
             >
-              {child.fraction}
+              {child.value.toFixed(2)}
 
-              {/* "+" Button to add a node */}
+              {/* "+" Button */}
               <button
                 style={{
                   position: 'absolute',
-                  top: '-25px',  // Space between node and button
-                  left: '-25px', // Space from left edge of node
+                  top: '-20px',
+                  left: '-20px',
                   fontSize: '18px',
                   cursor: 'pointer',
                   background: 'transparent',
                   border: 'none',
                   color: 'white',
-                  padding: '8px',
-                  borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                 }}
-                onClick={() => addChildNode(parentIndex)}
+                onClick={() => addChildNode(parentIndex)} // Add child to the current node
               >
                 +
               </button>
 
-              {/* "-" Button to remove a node */}
+              {/* "-" Button */}
               {child.children.length > 0 && (
                 <button
                   style={{
                     position: 'absolute',
-                    top: '-25px',  // Space between node and button
-                    right: '-25px', // Space from right edge of node
+                    top: '-20px',
+                    right: '-20px',
                     fontSize: '18px',
                     cursor: 'pointer',
                     background: 'transparent',
                     border: 'none',
                     color: 'white',
-                    padding: '8px',
-                    borderRadius: '50%',
-                    width: '32px',
-                    height: '32px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
                   }}
-                  onClick={() => removeChildNode(parentIndex, 0)}
+                  onClick={() => removeChildNode(0, parentIndex)} // Remove first child node
                 >
                   -
                 </button>
               )}
             </div>
+            <input
+              type="number"
+              value={child.value}
+              onChange={(e) => adjustNodeValue(0, parseFloat(e.target.value), parentIndex)} // Adjust value of the current child
+              step="0.01"
+              style={{ marginTop: '10px', width: '100%' }}
+            />
 
-            {/* Render child nodes (if any) */}
-            {child.children.map((subChild, childIndex) => (
-              <div key={childIndex} className="d-flex justify-content-center my-3" style={{ marginTop: '40px' }}>
-                <div
-                  className={styles.node}
-                  style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    backgroundColor: 'orange',
-                    color: 'white',
-                    fontWeight: 'bold',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '5px',
-                    position: 'relative',
-                  }}
-                >
-                  {subChild.fraction}
-                </div>
+            {/* Sub-child nodes */}
+            {child.children.length > 0 && (
+              <div className="d-flex justify-content-center flex-wrap">
+                {child.children.map((subChild, index) => (
+                  <div key={index} className="d-flex justify-content-center my-3">
+                    <div
+                      className={styles.node}
+                      style={{
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '50%',
+                        backgroundColor: 'lightcoral',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '5px',
+                        position: 'relative',
+                      }}
+                    >
+                      {subChild.value.toFixed(2)}
+
+                      {/* "+" Button */}
+                      <button
+                        style={{
+                          position: 'absolute',
+                          top: '-15px',
+                          left: '-15px',
+                          fontSize: '16px',
+                          cursor: 'pointer',
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'white',
+                        }}
+                        onClick={() => addChildNode(index)} // Add a sub-child
+                      >
+                        +
+                      </button>
+
+                      {/* "-" Button */}
+                      {subChild.children.length > 0 && (
+                        <button
+                          style={{
+                            position: 'absolute',
+                            top: '-15px',
+                            right: '-15px',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'white',
+                          }}
+                          onClick={() => removeChildNode(0, index)} // Remove sub-child node
+                        >
+                          -
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      type="number"
+                      value={subChild.value}
+                      onChange={(e) => adjustNodeValue(index, parseFloat(e.target.value), parentIndex)} // Adjust value of sub-child node
+                      step="0.01"
+                      style={{ marginTop: '10px', width: '100%' }}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         ))}
       </div>
@@ -199,4 +215,4 @@ const TreeComponent = () => {
   );
 };
 
-export default TreeComponent;
+export default FractionNodeApp;
