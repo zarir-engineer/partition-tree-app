@@ -49,19 +49,17 @@
 }
 
 
-/* Hide the number input spinner in modern browsers */
-:global(input[type="number"]::-webkit-outer-spin-button),
-:global(input[type="number"]::-webkit-inner-spin-button) {
-  -webkit-appearance: none;
-}
-
-/* Hide the number input spinner in Firefox */
-input[type="number"] {
+.inputNoSpinner input[type="number"] {
   -moz-appearance: textfield;
   margin: 0;
-
 }
 
+/* Hide the number input spinner in modern browsers */
+.inputNoSpinner input[type="number"]::-webkit-outer-spin-button,
+.inputNoSpinner input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
 /* Add these styles to your FractionNodeApp.module.css or global styles */
 

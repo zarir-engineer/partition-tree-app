@@ -129,6 +129,7 @@ const FractionNodeApp = () => {
             </div>
             <input
               type="number"
+              className={styles.inputNoSpinner} // Apply the class here
               value={child.value}
               onChange={(e) => adjustNodeValue(0, parseFloat(e.target.value), parentIndex)} // Adjust value of the current child
               step="0.01"
@@ -209,6 +210,7 @@ const FractionNodeApp = () => {
                     </div>
                     <input
                       type="number"
+                      className={styles.inputNoSpinner} // Apply the class here
                       value={subChild.value}
                       onChange={(e) => adjustNodeValue(index, parseFloat(e.target.value), parentIndex)} // Adjust value of sub-child node
                       step="0.01"
