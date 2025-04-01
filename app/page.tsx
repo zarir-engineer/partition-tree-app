@@ -1,9 +1,7 @@
-import CloudSpinnerGrid from "@/components/CloudSpinnerGrid";
-
 const Page = () => {
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <CloudSpinnerGrid />
+      <h1>Hello, World!</h1>
     </div>
   );
 };
