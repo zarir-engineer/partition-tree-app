@@ -1,5 +1,5 @@
 // TreeNode.tsx
-const TreeNode = ({ node, updateValue, addSubNode, removeSubNode }: any) => {
+const TreeNode = ({ node, updateValue, addSubNode }: any) => {
   return (
     <div style={{ marginLeft: "20px", borderLeft: "1px solid #ccc", paddingLeft: "10px" }}>
       <input
@@ -11,14 +11,11 @@ const TreeNode = ({ node, updateValue, addSubNode, removeSubNode }: any) => {
       />
       {node !== node.children && (
         <div className="mt-2">
-          <button className="btn btn-success mx-1" onClick={() => addSubNode(node)} disabled={node.children && node.children.length >= 4}>
+          <button className="btn btn-success mx-1" onClick={() => addSubNode(node)} disabled={node.children && node.children.length >= 2}>
             ➕ Add Sub-Node
           </button>
-          <button className="btn btn-warning mx-1" onClick={() => removeSubNode(node)} disabled={!node.children || node.children.length === 0}>
-            ➖ Remove Sub-Node
-          </button>
           {node.children?.map((child: any, index: number) => (
-            <TreeNode key={index} node={child} updateValue={updateValue} addSubNode={addSubNode} removeSubNode={removeSubNode} />
+            <TreeNode key={index} node={child} updateValue={updateValue} addSubNode={addSubNode} />
           ))}
         </div>
       )}
