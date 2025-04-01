@@ -7,7 +7,7 @@ interface CloudSpinnerProps {
   min?: number;
   max?: number;
   step?: number;
-  initialValue?: number;
+  initialValue: number; // Make sure this is defined
   onChange?: (value: number) => void;
 }
 
