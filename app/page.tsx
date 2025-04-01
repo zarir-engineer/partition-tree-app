@@ -14,26 +14,30 @@ const TreeComponent = () => {
   const [data, setData] = useState<Node>({
     value: 1,  // Root node value is set to 1
     fraction: "1",  // Root node fraction is '1'
-    children: [],  // Initially no children
+    children: Array(8).fill({
+      value: 0.125,  // Initialize each child node with a fraction value of 1/8
+      fraction: "1/8",
+      children: []
+    }),
   });
 
   // Function to adjust node values
   const adjustNodeValue = (index: number, value: number) => {
     const newChildren = [...data.children];
-    const total = newChildren.reduce((sum, child) => sum + child.value, 0);
-
-    // Update the fraction and decimal value
     newChildren[index].value = value;
-    newChildren[index].fraction = `1/${(1 / value).toFixed(2)}`; // Example: "1/8.12"
+    newChildren[index].fraction = `1/${(1 / value).toFixed(2)}`; // Update fraction accordingly
 
     // Normalize the other children to make the sum equal to 1
+    const total = newChildren.reduce((sum, child) => sum + child.value, 0);
     if (total !== 1) {
       newChildren.forEach((child, idx) => {
         if (idx !== index) {
           child.value = (1 - value) / (newChildren.length - 1);
+          child.fraction = `1/${(1 / child.value).toFixed(2)}`; // Update fraction for other nodes
         }
       });
     }
+
     setData({
       ...data,
       children: newChildren,
@@ -44,16 +48,21 @@ const TreeComponent = () => {
   const addChildNode = (index: number) => {
     const newChildren = [...data.children];
     const parentValue = newChildren[index].value;
-    const newValue = (parentValue + 0.12).toFixed(2); // Increase the value slightly on addition
 
-    newChildren[index].children.push({
+    // Add a new child node below the current one
+    const newValue = (parentValue + 0.01).toFixed(2); // Slight increase in value
+    const newChild: Node = {
       value: parseFloat(newValue),
       fraction: `1/${(1 / parseFloat(newValue)).toFixed(2)}`, // Update fraction accordingly
       children: [],
-    });
+    };
 
-    // Adjust the parent's value since it's now divided among the new children
+    // Push the new child to the current node's children array
+    newChildren[index].children.push(newChild);
+
+    // Update the value of the parent node to reflect the addition
     newChildren[index].value = parseFloat(newValue);
+
     setData({
       ...data,
       children: newChildren,
@@ -63,7 +72,7 @@ const TreeComponent = () => {
   // Function to remove a child node
   const removeChildNode = (parentIndex: number, childIndex: number) => {
     const newChildren = [...data.children];
-    newChildren[parentIndex].children.splice(childIndex, 1);  // Remove the specific child node
+    newChildren[parentIndex].children.splice(childIndex, 1); // Remove the specific child node
     setData({
       ...data,
       children: newChildren,
@@ -135,7 +144,7 @@ const TreeComponent = () => {
               </button>
 
               {/* "-" Button to remove a node */}
-              {data.children.length > 1 && (
+              {child.children.length > 0 && (
                 <button
                   style={{
                     position: 'absolute',
