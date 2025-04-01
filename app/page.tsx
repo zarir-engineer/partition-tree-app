@@ -1,4 +1,5 @@
 "use client";
+"use client";
 import { useState } from "react";
 import { Container } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -75,7 +76,7 @@ const FractionNodeApp = () => {
 
       <div className="d-flex justify-content-center flex-wrap" style={{ position: 'relative' }}>
         {/* Child nodes */}
-        {data.children.map((child, parentIndex) => (
+        {data.children.map((child: any, parentIndex: number) => (
           <div key={parentIndex} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
             {/* Line to connect parent and child node */}
             <div
@@ -155,7 +156,7 @@ const FractionNodeApp = () => {
             {/* Sub-child nodes */}
             {child.children.length > 0 && (
               <div className="d-flex justify-content-center flex-wrap" style={{ position: 'relative' }}>
-                {child.children.map((subChild, index) => (
+                {child.children.map((subChild: any, index: number) => (
                   <div key={index} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
                     {/* Line to connect sub-child and child node */}
                     <div
