@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 interface CloudSpinnerProps {
-  name: string;
+  name: string;  // ✅ Add this line
   min?: number;
   max?: number;
   step?: number;

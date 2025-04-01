@@ -25,7 +25,7 @@ const CloudSpinnerGrid = () => {
         <CloudSpinner
           key={index}
           name={name}  // ✅ Ensure `name` is passed
-          initialValue={values[index]}  // ✅ Explicitly pass `initialValue`
+          initialValue={values[index]}  // ✅ Ensure `initialValue` is passed
           onChange={(newValue) => handleValueChange(index, newValue)}
         />
       ))}
