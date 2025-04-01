@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import React, { useState } from 'react';  // Import necessary libraries: React and useState hook
 import { Button, Container, Row, Col } from 'react-bootstrap';  // Import Bootstrap components for styling
 import styles from './styles/FractionNodeApp.module.css';  // Import the CSS module
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 // This is the main component of the app
