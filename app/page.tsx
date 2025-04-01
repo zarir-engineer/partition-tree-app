@@ -2,10 +2,24 @@
 
 import { useState } from "react";
 
-const CloudSpinner = ({ min = 0, max = 100, step = 1, initialValue = 50, onChange }) => {
+interface CloudSpinnerProps {
+  min?: number;
+  max?: number;
+  step?: number;
+  initialValue?: number;
+  onChange?: (value: number) => void; // Explicit type
+}
+
+const CloudSpinner: React.FC<CloudSpinnerProps> = ({
+  min = 0,
+  max = 100,
+  step = 1,
+  initialValue = 50,
+  onChange
+}) => {
   const [value, setValue] = useState(initialValue);
 
-  const handleChange = (delta) => {
+  const handleChange = (delta: number) => {
     let newValue = Math.min(max, Math.max(min, value + delta));
     setValue(newValue);
     if (onChange) onChange(newValue);
@@ -38,16 +52,4 @@ const CloudSpinner = ({ min = 0, max = 100, step = 1, initialValue = 50, onChang
   );
 };
 
-const CloudSpinnerGrid = () => {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border-t border-gray-300">
-      {[...Array(8)].map((_, index) => (
-        <div key={index} className="border border-gray-300 p-4 flex justify-center">
-          <CloudSpinner />
-        </div>
-      ))}
-    </div>
-  );
-};
-
-export default CloudSpinnerGrid;
+export default CloudSpinner;
