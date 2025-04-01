@@ -9,9 +9,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="column">
             {children} {/* This renders the content from page.tsx */}
           </div>
-          <div className="column">
-            <h2>Nodes</h2>
-          </div>
         </div>
       </body>
     </html>

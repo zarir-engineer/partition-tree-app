@@ -1,0 +1,49 @@
+/* General node styling */
+.node {
+  background-color: #ffcc00;  /* Yellow color for the node */
+  width: 100px;               /* Width of the node */
+  height: 100px;              /* Height of the node */
+  border-radius: 50%;         /* Makes the node circular */
+  display: flex;              /* Flexbox layout to center the text */
+  justify-content: center;    /* Center the content horizontally */
+  align-items: center;        /* Center the content vertically */
+  font-size: 18px;            /* Font size for the node's value */
+  color: white;               /* White text color */
+  position: relative;         /* Position relative for placing buttons */
+}
+
+/* Styling for the add and remove buttons */
+.add-btn, .remove-btn {
+  position: absolute;
+  top: 5px;                  /* Position the buttons near the top */
+  background-color: #fff;    /* White background for the buttons */
+  border: none;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;           /* Larger font size for the plus/minus sign */
+  color: #ffcc00;            /* Match the node color for consistency */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);  /* Add a shadow effect */
+}
+
+/* Positioning for the add button on the left */
+.add-btn {
+  left: 5px;
+}
+
+/* Positioning for the remove button on the right */
+.remove-btn {
+  right: 5px;
+}
+
+/* Add spacing between nodes */
+.node-container {
+  display: flex;
+  justify-content: space-around;  /* Spread nodes evenly */
+  margin-top: 20px;
+}
+
+/* Optional: Add some margin around the node container */
+.mt-4 {
+  margin-top: 20px;
+}

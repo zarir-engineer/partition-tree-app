@@ -1,116 +1,117 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
+import React, { useState } from 'react';  // Import necessary libraries: React and useState hook
+import { Button, Container, Row, Col } from 'react-bootstrap';  // Import Bootstrap components for styling
+import styles from './styles/FractionNodeApp.module.css';  // Import the CSS module
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const TreeComponent = () => {
-  // State to manage the root data for the tree
-  const [data, setData] = useState<any>({
-    value: 66.67, // Root node value
-    children: Array(8).fill({ value: 1 / 8, children: [] }), // 8 child nodes with initial value 1/8
-  });
 
-  const svgRef = useRef<SVGSVGElement | null>(null);
+// This is the main component of the app
+const FractionNodeApp = () => {
 
-  // Function to render the tree
-  const renderTree = () => {
-    if (!svgRef.current) return;
-    const width = 600, height = 400;
-    const svg = d3.select(svgRef.current).attr("width", width).attr("height", height);
-    svg.selectAll("*").remove();
+  // "nodes" is an array that stores the values of 8 child nodes.
+  // Initially, each child node has a value of 1/8 (0.125).
+  const [nodes, setNodes] = useState(Array(8).fill(1/8));
 
-    const hierarchy = d3.hierarchy(data, (d: any) => d.children);
-    const treeLayout = d3.tree<any>().size([width - 100, height - 100]);
-    treeLayout(hierarchy);
+  // "topNode" is the main or "top" node. Initially, it holds a value of 66.67.
+  const [topNode, setTopNode] = useState(66.67);
 
-    // Draw links between nodes
-    svg.selectAll(".link")
-      .data(hierarchy.links())
-      .enter()
-      .append("line")
-      .attr("x1", (d) => (d.source?.x ?? 0) + 50)
-      .attr("y1", (d) => (d.source?.y ?? 0) + 50)
-      .attr("x2", (d) => (d.target?.x ?? 0) + 50)
-      .attr("y2", (d) => (d.target?.y ?? 0) + 50)
-      .attr("stroke", "#999");
+  // This function allows the user to modify the value of a node.
+  // It takes in the node index (which node to change) and the new value.
+  const handleValueChange = (index: number, value: number) => {
+    // Make a copy of the current nodes array (since React requires you to not modify state directly)
+    const updatedNodes = [...nodes];
 
-    // Draw nodes as circles
-    const nodes = svg.selectAll(".node")
-      .data(hierarchy.descendants())
-      .enter()
-      .append("g")
-      .attr("transform", (d) => `translate(${(d.x ?? 0) + 50}, ${(d.y ?? 0) + 50})`);
+    // Change the value of the node at the specified index
+    updatedNodes[index] = value;
 
-    // Add circles for nodes (spheres)
-    nodes.append("circle")
-      .attr("r", 20)
-      .attr("fill", "steelblue");
+    // Now we need to update the other nodes so that all values add up to 1 (or 100%).
+    // First, calculate the remaining value that is missing to reach 1 (100%).
+    const remainingValue = 1 - updatedNodes.reduce((acc, node) => acc + node, 0);
 
-    // Add the value text inside the circles
-    nodes.append("text")
-      .attr("dy", 4)
-      .attr("text-anchor", "middle")
-      .attr("fill", "white")
-      .text((d) => Math.round(d.data.value));
-
-    // Add "+" and "-" buttons for adding and removing subnodes
-    nodes.each(function (d) {
-      const nodeGroup = d3.select(this);
-
-      // "+" Button to add a node (Positioned top-left)
-      nodeGroup.append("text")
-        .attr("x", -30) // Positioning "+" button to the left of the node (top-left)
-        .attr("dy", -25) // Above the node (top)
-        .attr("text-anchor", "middle")
-        .attr("font-size", "16px")
-        .attr("cursor", "pointer")
-        .text("+")
-        .on("click", () => addSubNode(d)); // Assuming addSubNode function is defined elsewhere
-
-      // "-" Button to remove a node (Positioned top-right, only for non-root nodes)
-      if (d.depth > 0) {
-        nodeGroup.append("text")
-          .attr("x", 30) // Positioning "-" button to the right of the node (top-right)
-          .attr("dy", -25) // Above the node (top)
-          .attr("text-anchor", "middle")
-          .attr("font-size", "16px")
-          .attr("cursor", "pointer")
-          .text("-")
-          .on("click", () => removeNode(d)); // Assuming removeNode function is defined elsewhere
+    // Update all other nodes with an equal share of the remaining value.
+    updatedNodes.forEach((_, i) => {
+      if (i !== index) {
+        updatedNodes[i] = remainingValue / (nodes.length - 1);
       }
     });
 
-    // Additional styling for nodes, e.g., adding a border to make them look like spheres
-    nodes.select("circle")
-      .style("stroke", "#000")
-      .style("stroke-width", 2);
+    // Finally, update the state with the new values of all the nodes
+    setNodes(updatedNodes);
   };
 
-  // Add a new sub-node to the tree
-  const addSubNode = (node: any) => {
-    const newNode = { value: 0, children: [] }; // Example of a new node
-    node.children.push(newNode);
-    setData({ ...data }); // Trigger a re-render of the tree by updating the state
+  // This function adds a new node with an initial value of 1/8 (0.125).
+  const addNode = (index: number) => {
+    // Copy the current nodes array
+    const updatedNodes = [...nodes];
+
+    // Insert a new node right after the specified index
+    updatedNodes.splice(index + 1, 0, 1 / 8);
+
+    // Update the state with the new array of nodes
+    setNodes(updatedNodes);
   };
 
-  // Remove a node from the tree
-  const removeNode = (node: any) => {
-    if (node.parent) {
-      const parentNode = node.parent;
-      parentNode.children = parentNode.children.filter((child: any) => child !== node);
-      setData({ ...data }); // Trigger a re-render of the tree by updating the state
+  // This function removes a node from the array at the specified index.
+  const removeNode = (index: number) => {
+    if (nodes.length > 1) {
+      // Copy the current nodes array
+      const updatedNodes = [...nodes];
+
+      // Remove the node at the specified index
+      updatedNodes.splice(index, 1);
+
+      // Update the state with the new array of nodes
+      setNodes(updatedNodes);
     }
   };
 
-  // Call renderTree after the data or component has been mounted
-  useEffect(() => {
-    renderTree();
-  }, [data]); // Run renderTree whenever the data changes
+  // This function adjusts the value of the top node (by adding or subtracting a fixed amount)
+  const changeTopNodeValue = (delta: number) => {
+    setTopNode(prev => Math.max(0, prev + delta));  // Prevent the top node value from going below 0
+  };
 
+  // The UI of the app: using Bootstrap components for layout and styling
   return (
-    <div>
-      <svg ref={svgRef}></svg>
-    </div>
+    <Container className="mt-5">  {/* This creates a container to hold all the content */}
+
+      {/* A section for the top node, displaying its value and allowing adjustments with + and - buttons */}
+      <div className="text-center mb-4">
+        <div className="node">
+          <div className="d-flex justify-content-between align-items-center">
+            {/* Add button for top node */}
+            <Button className="add-btn" onClick={() => changeTopNodeValue(5)}>+</Button>
+            {/* Display the top node value */}
+            <span>{topNode.toFixed(2)}</span>
+            {/* Remove button for top node */}
+            <Button className="remove-btn" onClick={() => changeTopNodeValue(-5)}>-</Button>
+          </div>
+        </div>
+      </div>
+
+      {/* A section to display 8 child nodes below the top node */}
+      <Row className="justify-content-center">
+        {/* Loop through the nodes array and create a node for each entry */}
+        {nodes.map((nodeValue, index) => (
+          <Col key={index} xs={3} className="d-flex justify-content-center mb-4">
+            <div className="node">
+              <div className="d-flex justify-content-between align-items-center">
+                {/* Add button for each node */}
+                <Button className="add-btn" onClick={() => addNode(index)}>+</Button>
+                {/* Display the value of each node, converted to percentage */}
+                <span>{(nodeValue * 100).toFixed(2)}%</span>
+                {/* Remove button for each node */}
+                <Button className="remove-btn" onClick={() => removeNode(index)}>-</Button>
+              </div>
+            </div>
+          </Col>
+        ))}
+      </Row>
+
+      {/* Optional, add lines or SVG here to visually connect the nodes */}
+      {/* <svg> for connecting the nodes */}
+    </Container>
   );
 };
 
-export default TreeComponent;
+export default FractionNodeApp;
