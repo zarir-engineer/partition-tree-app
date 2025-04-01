@@ -1,52 +1,30 @@
 "use client";
 import { useState } from "react";
 
-const CloudSpinner = ({ min = 0, max = 100, step = 1, initialValue = 50, onChange }) => {
-  const [value, setValue] = useState(initialValue);
+const SphericalSpinnerGroup = ({ totalValue, options, onValuesChange }) => { const numWidgets = 8; const initialValue = (totalValue / numWidgets).toFixed(3); const [values, setValues] = useState(Array(numWidgets).fill(initialValue));
 
-  const handleChange = (delta) => {
-    let newValue = Math.min(max, Math.max(min, value + delta));
-    setValue(newValue);
-    if (onChange) onChange(newValue);
-  };
+const adjustValue = (index, delta) => { let newValues = [...values]; let newValue = (parseFloat(newValues[index]) + delta).toFixed(3); if (newValue < 0) return; let diff = newValue - values[index]; let remainingIndexes = [...Array(numWidgets).keys()].filter(i => i !== index); let distributed = 0;
 
-  return (
-    <div className="relative flex flex-col items-center">
-      {/* Cloud Shape */}
-      <div className="relative bg-blue-300 w-24 h-16 rounded-full flex items-center justify-center shadow-lg">
-        <div className="absolute bg-blue-300 w-16 h-16 rounded-full -top-4 left-2"></div>
-        <div className="absolute bg-blue-300 w-12 h-12 rounded-full -top-6 right-3"></div>
-        <span className="text-white font-bold text-xl">{value}</span>
-      </div>
-      {/* Controls */}
-      <div className="flex mt-2 space-x-2">
-        <button
-          className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-lg font-bold shadow"
-          onClick={() => handleChange(-step)}
-        >
-          -
-        </button>
-        <button
-          className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-lg font-bold shadow"
-          onClick={() => handleChange(step)}
-        >
-          +
-        </button>
-      </div>
-    </div>
-  );
+for (let i of remainingIndexes) {
+  let portion = diff / remainingIndexes.length;
+  let adjustedValue = parseFloat(newValues[i]) - portion;
+  if (adjustedValue < 0) adjustedValue = 0;
+  newValues[i] = adjustedValue.toFixed(3);
+  distributed += portion;
+}
+
+newValues[index] = newValue;
+let sumAdjustment = totalValue - newValues.reduce((sum, val) => sum + parseFloat(val), 0);
+newValues[remainingIndexes[0]] = (parseFloat(newValues[remainingIndexes[0]]) + sumAdjustment).toFixed(3);
+
+setValues(newValues);
+onValuesChange(newValues);
+
 };
 
-const CloudSpinnerGrid = () => {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border-t border-gray-300">
-      {[...Array(8)].map((_, index) => (
-        <div key={index} className="border border-gray-300 p-4 flex justify-center">
-          <CloudSpinner />
-        </div>
-      ))}
-    </div>
-  );
-};
+return ( <div className="grid grid-cols-4 gap-4 p-4"> {values.map((value, index) => ( <div key={index} className="relative inline-block text-center"> <div className="flex items-center justify-center space-x-2"> <button className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold shadow" onClick={() => adjustValue(index, -0.001)} > - </button> <div
+className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg flex items-center justify-center text-white font-bold text-lg border-2 border-white"
+> {value} </div> <button className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold shadow" onClick={() => adjustValue(index, 0.001)} > + </button> </div> </div> ))} </div> ); };
 
-export default CloudSpinnerGrid;
+export default SphericalSpinnerGroup;
+
