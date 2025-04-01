@@ -1,57 +1,25 @@
-// CloudSpinner.tsx
 "use client";
 import { useState } from "react";
 
 interface CloudSpinnerProps {
   name: string;
-  min?: number;
-  max?: number;
-  step?: number;
-  initialValue: number;
-  onChange?: (value: number) => void;
+  value: number;
+  onChange: (newValue: number) => void;
 }
 
-const CloudSpinner: React.FC<CloudSpinnerProps> = ({
-  name,
-  min = 0,
-  max = 100,
-  step = 1,
-  initialValue,
-  onChange,
-}) => {
-  const [value, setValue] = useState<number>(initialValue);
-
-  const handleChange = (delta: number) => {
-    const newValue = Math.min(max, Math.max(min, value + delta));
-    setValue(newValue);
-    if (onChange) onChange(newValue);
-  };
-
+const CloudSpinner: React.FC<CloudSpinnerProps> = ({ name, value, onChange }) => {
   return (
-    <div className="flex flex-col items-center p-4">
-      <h2 className="mb-2 text-lg font-bold">{name}</h2>
-      <div className="relative flex items-center">
-        {/* Minus Button */}
-        <button
-          className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-lg font-bold shadow absolute -left-12"
-          onClick={() => handleChange(-step)}
-        >
-          -
-        </button>
-        {/* Cloud Shape */}
-        <div className="relative bg-blue-300 w-24 h-16 rounded-full flex items-center justify-center shadow-lg">
-          <div className="absolute bg-blue-300 w-16 h-16 rounded-full -top-4 left-2"></div>
-          <div className="absolute bg-blue-300 w-12 h-12 rounded-full -top-6 right-3"></div>
-          <span className="text-white font-bold text-xl">{value}</span>
-        </div>
-        {/* Plus Button */}
-        <button
-          className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center text-lg font-bold shadow absolute -right-12"
-          onClick={() => handleChange(step)}
-        >
-          +
-        </button>
-      </div>
+    <div className="flex flex-col items-center p-2">
+      <h3 className="text-sm font-semibold">{name}</h3>
+      <input
+        type="number"
+        step="0.001"
+        min="0"
+        max="1"
+        value={value}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
+        className="w-16 p-1 text-center border rounded"
+      />
     </div>
   );
 };
