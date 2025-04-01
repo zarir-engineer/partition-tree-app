@@ -72,10 +72,23 @@ const FractionNodeApp = () => {
         </div>
       </div>
 
-      <div className="d-flex justify-content-center flex-wrap">
+      <div className="d-flex justify-content-center flex-wrap" style={{ position: 'relative' }}>
         {/* Child nodes */}
         {data.children.map((child, parentIndex) => (
-          <div key={parentIndex} className="d-flex justify-content-center my-3">
+          <div key={parentIndex} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
+            {/* Line to connect parent and child node */}
+            <div
+              style={{
+                position: 'absolute',
+                top: '50px', // Adjust depending on the size of the parent node
+                left: '50%',
+                width: '2px',
+                height: '50px',
+                backgroundColor: 'gray',
+                transform: 'translateX(-50%)',
+              }}
+            />
+
             <div
               className={styles.node}
               style={{
@@ -140,9 +153,22 @@ const FractionNodeApp = () => {
 
             {/* Sub-child nodes */}
             {child.children.length > 0 && (
-              <div className="d-flex justify-content-center flex-wrap">
+              <div className="d-flex justify-content-center flex-wrap" style={{ position: 'relative' }}>
                 {child.children.map((subChild, index) => (
-                  <div key={index} className="d-flex justify-content-center my-3">
+                  <div key={index} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
+                    {/* Line to connect sub-child and child node */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '50px',
+                        left: '50%',
+                        width: '2px',
+                        height: '50px',
+                        backgroundColor: 'gray',
+                        transform: 'translateX(-50%)',
+                      }}
+                    />
+
                     <div
                       className={styles.node}
                       style={{
