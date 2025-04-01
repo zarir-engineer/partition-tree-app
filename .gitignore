@@ -1,4 +1,9 @@
-/node_modules
+# recommended by chatgpt
+node_modules/
+.next/
+dist/
+*.log
+
 /.pnp
 .pnp.*
 .yarn/*
