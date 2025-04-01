@@ -40,7 +40,7 @@ const FractionNodeApp = () => {
 
   // Function to remove a child node
   const removeChildNode = (index: number) => {
-    const newChildren = data.children.filter((_, i: number) => i !== index);  // Explicitly type the second parameter
+    const newChildren = data.children.filter((_: any, i: number) => i !== index);  // Explicitly type the first parameter as any
     setData({
       ...data,
       children: newChildren,
