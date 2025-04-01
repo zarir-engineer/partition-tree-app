@@ -1,83 +1,30 @@
 "use client";
 import { useState } from "react";
-import { Container } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./styles/FractionNodeApp.module.css";
 
-const FractionNodeApp = () => {
-  // Define the tree structure with a root node
-  const [data, setData] = useState({
-    value: 66.67, // Root node value
-    children: Array(8).fill({ value: 8.33, children: [] }), // 8 child nodes, each 8.33
-  });
+const SphericalSpinnerGroup = ({ totalValue, options, onValuesChange }) => { const numWidgets = 8; const initialValue = (totalValue / numWidgets).toFixed(3); const [values, setValues] = useState(Array(numWidgets).fill(initialValue));
 
-  // Adjust the value of a child node while maintaining the sum
-  const adjustNodeValue = (index, value, parentIndex) => {
-    const newChildren = [...data.children];
-    newChildren[parentIndex].children[index].value = value;
+const adjustValue = (index, delta) => { let newValues = [...values]; let newValue = (parseFloat(newValues[index]) + delta).toFixed(3); if (newValue < 0) return; let diff = newValue - values[index]; let remainingIndexes = [...Array(numWidgets).keys()].filter(i => i !== index); let distributed = 0;
 
-    // Normalize the other children so the total sum remains unchanged
-    const total = newChildren[parentIndex].children.reduce(
-      (sum, child) => sum + child.value,
-      0
-    );
+for (let i of remainingIndexes) {
+  let portion = diff / remainingIndexes.length;
+  let adjustedValue = parseFloat(newValues[i]) - portion;
+  if (adjustedValue < 0) adjustedValue = 0;
+  newValues[i] = adjustedValue.toFixed(3);
+  distributed += portion;
+}
 
-    if (total !== newChildren[parentIndex].value) {
-      newChildren[parentIndex].children.forEach((child, idx) => {
-        if (idx !== index) {
-          child.value =
-            (newChildren[parentIndex].value - value) /
-            (newChildren[parentIndex].children.length - 1);
-        }
-      });
-    }
-    setData({ ...data, children: newChildren });
-  };
+newValues[index] = newValue;
+let sumAdjustment = totalValue - newValues.reduce((sum, val) => sum + parseFloat(val), 0);
+newValues[remainingIndexes[0]] = (parseFloat(newValues[remainingIndexes[0]]) + sumAdjustment).toFixed(3);
 
-  // Function to add a child node
-  const addChildNode = (index) => {
-    const newChildren = [...data.children];
-    newChildren[index].children.push({ value: 8.33, children: [] });
-    setData({ ...data, children: newChildren });
-  };
+setValues(newValues);
+onValuesChange(newValues);
 
-  // Function to remove a child node
-  const removeChildNode = (index, parentIndex) => {
-    const newChildren = [...data.children];
-    newChildren[parentIndex].children.splice(index, 1);
-    setData({ ...data, children: newChildren });
-  };
-
-  return (
-    <Container className="my-4">
-      <div className="d-flex justify-content-center mb-4">
-        {/* Root node */}
-        <div className={styles.node}>{data.value.toFixed(2)}</div>
-      </div>
-
-      {/* Render child nodes */}
-      <div className="d-flex justify-content-center flex-wrap">
-        {data.children.map((child, parentIndex) => (
-          <div key={parentIndex} className="d-flex flex-column align-items-center">
-            <div className={styles.node}>{child.value.toFixed(2)}</div>
-            <input
-              type="number"
-              className={styles.inputNoSpinner}
-              value={child.value}
-              onChange={(e) =>
-                adjustNodeValue(0, parseFloat(e.target.value), parentIndex)
-              }
-              step="0.01"
-            />
-            <button onClick={() => addChildNode(parentIndex)}>+</button>
-            {child.children.length > 0 && (
-              <button onClick={() => removeChildNode(0, parentIndex)}>-</button>
-            )}
-          </div>
-        ))}
-      </div>
-    </Container>
-  );
 };
 
-export default FractionNodeApp;
+return ( <div className="grid grid-cols-4 gap-4 p-4"> {values.map((value, index) => ( <div key={index} className="relative inline-block text-center"> <div className="flex items-center justify-center space-x-2"> <button className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-sm font-bold shadow" onClick={() => adjustValue(index, -0.001)} > - </button> <div
+className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full shadow-lg flex items-center justify-center text-white font-bold text-lg border-2 border-white"
+> {value} </div> <button className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold shadow" onClick={() => adjustValue(index, 0.001)} > + </button> </div> </div> ))} </div> ); };
+
+export default SphericalSpinnerGroup;
+
