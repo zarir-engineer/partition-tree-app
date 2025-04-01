@@ -3,11 +3,11 @@
 import { useState } from "react";
 
 interface CloudSpinnerProps {
-  name: string;  // ✅ Add this line
+  name: string;
   min?: number;
   max?: number;
   step?: number;
-  initialValue: number; // Make sure this is defined
+  initialValue: number;
   onChange?: (value: number) => void;
 }
 
@@ -16,10 +16,10 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
   min = 0,
   max = 100,
   step = 1,
-  initialValue,  // ✅ Ensure it's being used
+  initialValue,
   onChange,
 }) => {
-  const [value, setValue] = useState<number>(initialValue);  // ✅ Explicit type
+  const [value, setValue] = useState<number>(initialValue);
 
   const handleChange = (delta: number) => {
     const newValue = Math.min(max, Math.max(min, value + delta));
@@ -62,13 +62,23 @@ const names = [
 ];
 
 const CloudSpinnerGrid = () => {
+  const [values, setValues] = useState<number[]>(Array(names.length).fill(100));
+
+  const handleValueChange = (index: number, newValue: number) => {
+    const updatedValues = [...values];
+    updatedValues[index] = newValue;
+    setValues(updatedValues);
+  };
+
   return (
     <div className="grid grid-cols-8 gap-4 p-4">
       {names.map((name, index) => (
-        <div key={index} className="flex flex-col items-center">
-          <h2 className="text-lg font-bold">{name}</h2>
-          <CloudSpinner name={name} initialValue={100} />
-        </div>
+        <CloudSpinner
+          key={index}
+          name={name}
+          initialValue={values[index]}
+          onChange={(newValue) => handleValueChange(index, newValue)}
+        />
       ))}
     </div>
   );
