@@ -2,13 +2,12 @@
 import { useState } from "react";
 import CloudSpinner from "./CloudSpinner";
 
-// Define the list of names outside the component to avoid repetition
 const names = [
   "Sudarshan-ji", "Shripal-ji", "Ishwar-ji", "Vigyanchand-ji",
   "Parmeshwar-ji", "Pratap-ji", "Jagdish-ji", "Aaji"
 ];
 
-const TOTAL_VALUE = 1000; // Example total value
+const TOTAL_VALUE = 1000;
 const INITIAL_VALUES = Array(names.length).fill(TOTAL_VALUE / names.length);
 
 const CloudSpinnerGrid = () => {
@@ -25,9 +24,9 @@ const CloudSpinnerGrid = () => {
       {names.map((name, index) => (
         <CloudSpinner
           key={index}
-          name={name} // Ensure `name` is passed
-          initialValue={values[index]} // Ensure `initialValue` is passed
-          onChange={(newValue) => handleValueChange(index, newValue)}
+          name={name}  // Pass the `name`
+          initialValue={values[index]}  // Pass the `initialValue`
+          onChange={(newValue) => handleValueChange(index, newValue)}  // Handle change
         />
       ))}
     </div>

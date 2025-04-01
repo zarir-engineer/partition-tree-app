@@ -1,5 +1,5 @@
+// CloudSpinner.tsx
 "use client";
-
 import { useState } from "react";
 
 interface CloudSpinnerProps {
@@ -31,7 +31,7 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
     <div className="flex flex-col items-center p-4">
       <h2 className="mb-2 text-lg font-bold">{name}</h2>
       <div className="relative flex items-center">
-        {/* Minus Button (Left Ear) */}
+        {/* Minus Button */}
         <button
           className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-lg font-bold shadow absolute -left-12"
           onClick={() => handleChange(-step)}
@@ -44,7 +44,7 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
           <div className="absolute bg-blue-300 w-12 h-12 rounded-full -top-6 right-3"></div>
           <span className="text-white font-bold text-xl">{value}</span>
         </div>
-        {/* Plus Button (Right Ear) */}
+        {/* Plus Button */}
         <button
           className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center text-lg font-bold shadow absolute -right-12"
           onClick={() => handleChange(step)}
@@ -56,32 +56,4 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
   );
 };
 
-const names = [
-  "Sudarshan-ji", "Shripal-ji", "Ishwar-ji", "Vigyanchand-ji",
-  "Parmeshwar-ji", "Pratap-ji", "Jagdish-ji", "Aaji"
-];
-
-const CloudSpinnerGrid = () => {
-  const [values, setValues] = useState<number[]>(Array(names.length).fill(100));
-
-  const handleValueChange = (index: number, newValue: number) => {
-    const updatedValues = [...values];
-    updatedValues[index] = newValue;
-    setValues(updatedValues);
-  };
-
-  return (
-    <div className="grid grid-cols-8 gap-4 p-4">
-      {names.map((name, index) => (
-        <CloudSpinner
-          key={index}
-          name={name}
-          initialValue={values[index]}
-          onChange={(newValue) => handleValueChange(index, newValue)}
-        />
-      ))}
-    </div>
-  );
-};
-
-export default CloudSpinnerGrid;
+export default CloudSpinner;
