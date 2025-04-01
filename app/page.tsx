@@ -36,7 +36,7 @@ const TreeComponent = () => {
 
   // Function to add a new child node
   const addChildNode = () => {
-    const newChild = { value: 0, children: [] };
+    const newChild = { value: 0.1, children: [] }; // Adding a node with a default value of 0.1
     setData({
       ...data,
       children: [...data.children, newChild],
@@ -102,8 +102,8 @@ const TreeComponent = () => {
               <button
                 style={{
                   position: 'absolute',
-                  top: '-20px',
-                  left: '-20px',
+                  top: '-15px',
+                  left: '-15px',
                   fontSize: '18px',
                   cursor: 'pointer',
                   background: 'transparent',
@@ -120,8 +120,8 @@ const TreeComponent = () => {
                 <button
                   style={{
                     position: 'absolute',
-                    top: '-20px',
-                    right: '-20px',
+                    top: '-15px',
+                    right: '-15px',
                     fontSize: '18px',
                     cursor: 'pointer',
                     background: 'transparent',
