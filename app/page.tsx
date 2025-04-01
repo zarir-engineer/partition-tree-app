@@ -47,7 +47,7 @@ const PartitionTree = () => {
   };
 
   const addChild = () => {
-    if (data.children.length < 3) {
+    if (data.children.length < 8) {
       setData({
         ...data,
         children: [
@@ -134,7 +134,7 @@ const PartitionTree = () => {
       </div>
 
       <div className="d-flex justify-content-center mt-3">
-        <button className="btn btn-primary mx-2" onClick={addChild} disabled={data.children.length >= 3}>
+        <button className="btn btn-primary mx-2" onClick={addChild} disabled={data.children.length >= 8}>
           ➕ Add Child
         </button>
         <button className="btn btn-danger mx-2" onClick={removeChild} disabled={data.children.length <= 1}>
