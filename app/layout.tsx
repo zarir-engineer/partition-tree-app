@@ -1,16 +1,16 @@
-// layout.tsx
-import './globals.css'; // Import global styles
-
+import './globals.css'; // Keep if you need custom styles
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { ReactNode } from "react";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        {/* Use grid layout with 8 columns */}
-        <div className="grid grid-cols-8 gap-4">
-          <div className="col-span-8">
-            {children} {/* This renders the content from page.tsx */}
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              {children}
+            </div>
           </div>
         </div>
       </body>
