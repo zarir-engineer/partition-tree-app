@@ -63,9 +63,12 @@ const names = [
 
 const CloudSpinnerGrid = () => {
   return (
-    <div className="flex flex-col items-center gap-4 p-4">
+    <div className="grid grid-cols-8 gap-4 p-4">
       {names.map((name, index) => (
-        <CloudSpinner key={index} name={name} initialValue={100} />
+        <div key={index} className="flex flex-col items-center">
+          <h2 className="text-lg font-bold">{name}</h2>
+          <CloudSpinner name={name} initialValue={100} />
+        </div>
       ))}
     </div>
   );
