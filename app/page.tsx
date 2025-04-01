@@ -3,7 +3,31 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import "bootstrap/dist/css/bootstrap.min.css";
-import TreeNode from "./TreeNode"; // Import TreeNode component
+
+// Define TreeNode before using it in Page
+const TreeNode = ({ node, updateValue, addSubNode }: any) => {
+  return (
+    <div style={{ marginLeft: "20px", borderLeft: "1px solid #ccc", paddingLeft: "10px" }}>
+      <input
+        type="number"
+        className="form-control d-inline w-25"
+        value={Math.round(node.value)}
+        onChange={(e) => updateValue(node, parseFloat(e.target.value))}
+        step="1"
+      />
+      {node !== node.children && (
+        <div className="mt-2">
+          <button className="btn btn-success mx-1" onClick={() => addSubNode(node)} disabled={node.children && node.children.length >= 2}>
+            ➕ Add Sub-Node
+          </button>
+          {node.children?.map((child: any, index: number) => (
+            <TreeNode key={index} node={child} updateValue={updateValue} addSubNode={addSubNode} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const PartitionTree = () => {
   const [data, setData] = useState({
@@ -119,10 +143,10 @@ const PartitionTree = () => {
       </div>
 
       <div className="d-flex mt-4">
-        <div className="w-50">
+        <div className="w-50" style={{ borderRight: "1px solid #ccc", paddingRight: "20px" }}>
           <TreeNode node={data} updateValue={updateValue} addSubNode={addSubNode} />
         </div>
-        <div className="w-50">
+        <div className="w-50" style={{ paddingLeft: "20px" }}>
           <svg ref={svgRef}></svg>
         </div>
       </div>
