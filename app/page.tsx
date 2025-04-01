@@ -1,5 +1,4 @@
 "use client";
-"use client";
 import { useState } from "react";
 import { Container } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,46 +6,44 @@ import styles from './styles/FractionNodeApp.module.css';
 
 const FractionNodeApp = () => {
   const [data, setData] = useState<any>({
-    value: 66.67, // Root node value as 66.67
-    children: Array(8).fill({ value: 8.33, children: [] }), // 8 child nodes with initial value 8.33 (66.67 / 8)
+    value: 66.67, // Root node value
+    children: Array(8).fill(null).map(() => ({ value: 8.33, children: [] })), // 8 child nodes
   });
 
-  // Function to adjust node values
+  // Adjust node value while keeping the sum intact
   const adjustNodeValue = (index: number, value: number, parentIndex: number) => {
-    const newChildren = [...data.children];
-    newChildren[parentIndex].children[index].value = value;
+    const newData = JSON.parse(JSON.stringify(data)); // Deep copy
+    const parent = newData.children[parentIndex];
 
-    // Normalize the other children values to make sure the sum stays the same
-    const total = newChildren[parentIndex].children.reduce((sum: number, child: any) => sum + child.value, 0);
+    parent.children[index].value = value;
+    const total = parent.children.reduce((sum: number, child: any) => sum + child.value, 0);
 
-    if (total !== newChildren[parentIndex].value) {
-      newChildren[parentIndex].children.forEach((child: any, idx: number) => {
+    if (total !== parent.value) {
+      parent.children.forEach((child: any, idx: number) => {
         if (idx !== index) {
-          child.value = (newChildren[parentIndex].value - value) / (newChildren[parentIndex].children.length - 1);
+          child.value = (parent.value - value) / (parent.children.length - 1);
         }
       });
     }
-    setData({ ...data, children: newChildren });
+
+    setData(newData);
   };
 
-  // Function to add a new child node to a parent node
-  const addChildNode = (index: number) => {
-    const newNode = { value: 8.33, children: [] };
-    const newChildren = [...data.children];
-    newChildren[index].children.push(newNode); // Add child node
-    setData({
-      ...data,
-      children: newChildren,
+  // Add child node at any level
+  const addChildNode = (parentIndex: number) => {
+    setData((prevData: any) => {
+      const newData = JSON.parse(JSON.stringify(prevData)); // Deep copy
+      newData.children[parentIndex].children.push({ value: 8.33, children: [] });
+      return newData;
     });
   };
 
-  // Function to remove a child node
+  // Remove child node correctly
   const removeChildNode = (index: number, parentIndex: number) => {
-    const newChildren = [...data.children];
-    newChildren[parentIndex].children.splice(index, 1);
-    setData({
-      ...data,
-      children: newChildren,
+    setData((prevData: any) => {
+      const newData = JSON.parse(JSON.stringify(prevData)); // Deep copy
+      newData.children[parentIndex].children.splice(index, 1);
+      return newData;
     });
   };
 
@@ -54,22 +51,7 @@ const FractionNodeApp = () => {
     <Container className="my-4">
       <div className="d-flex justify-content-center mb-4">
         {/* Root node */}
-        <div
-          className={styles.node}
-          style={{
-            width: '100px',
-            height: '100px',
-            borderRadius: '50%',
-            backgroundColor: 'steelblue',
-            color: 'white',
-            fontWeight: 'bold',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: '20px',
-            position: 'relative',
-          }}
-        >
+        <div className={styles.node} style={nodeStyle(100)}>
           {data.value.toFixed(2)}
         </div>
       </div>
@@ -78,141 +60,39 @@ const FractionNodeApp = () => {
         {/* Child nodes */}
         {data.children.map((child: any, parentIndex: number) => (
           <div key={parentIndex} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
-            {/* Line to connect parent and child node */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '50px', // Adjust depending on the size of the parent node
-                left: '50%',
-                width: '2px',
-                height: '50px',
-                backgroundColor: 'gray',
-                transform: 'translateX(-50%)',
-              }}
-            />
-
-            <div
-              className={styles.node}
-              style={{
-                width: '70px',
-                height: '70px',
-                borderRadius: '50%',
-                backgroundColor: 'steelblue',
-                color: 'white',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '5px',
-                position: 'relative',
-              }}
-            >
+            <div className={styles.node} style={nodeStyle(70)}>
               {child.value.toFixed(2)}
-
-                {/* "+" Button */}
-                <button
-                  className="plus"
-                  onClick={() => addChildNode(parentIndex)} // Add child to the current node
-                >
-                  +
-                </button>
-
-                {/* "-" Button */}
-                {child.children.length > 0 && (
-                  <button
-                    className="minus"
-                    onClick={() => removeChildNode(0, parentIndex)} // Remove first child node
-                  >
-                    -
-                  </button>
-                )}
+              <button className="plus" onClick={() => addChildNode(parentIndex)}>+</button>
+              {child.children.length > 0 && (
+                <button className="minus" onClick={() => removeChildNode(0, parentIndex)}>-</button>
+              )}
             </div>
+
             <input
               type="number"
-              className={styles.inputNoSpinner} // Apply the class here
+              className={styles.inputNoSpinner}
               value={child.value}
-              onChange={(e) => adjustNodeValue(0, parseFloat(e.target.value), parentIndex)} // Adjust value of the current child
+              onChange={(e) => adjustNodeValue(parentIndex, parseFloat(e.target.value), parentIndex)}
               step="0.01"
               style={{ marginTop: '10px', width: '100%' }}
             />
 
             {/* Sub-child nodes */}
             {child.children.length > 0 && (
-              <div className="d-flex justify-content-center flex-wrap" style={{ position: 'relative' }}>
+              <div className="d-flex justify-content-center flex-wrap">
                 {child.children.map((subChild: any, index: number) => (
                   <div key={index} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
-                    {/* Line to connect sub-child and child node */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '50px',
-                        left: '50%',
-                        width: '2px',
-                        height: '50px',
-                        backgroundColor: 'gray',
-                        transform: 'translateX(-50%)',
-                      }}
-                    />
-
-                    <div
-                      className={styles.node}
-                      style={{
-                        width: '60px',
-                        height: '60px',
-                        borderRadius: '50%',
-                        backgroundColor: 'lightcoral',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        margin: '5px',
-                        position: 'relative',
-                      }}
-                    >
+                    <div className={styles.node} style={nodeStyle(60, "lightcoral")}>
                       {subChild.value.toFixed(2)}
-
-                      {/* "+" Button */}
-                      <button
-                        style={{
-                          position: 'absolute',
-                          top: '-15px',
-                          left: '-15px',
-                          fontSize: '16px',
-                          cursor: 'pointer',
-                          background: 'transparent',
-                          border: 'none',
-                          color: 'white',
-                        }}
-                        onClick={() => addChildNode(index)} // Add a sub-child
-                      >
-                        +
-                      </button>
-
-                      {/* "-" Button */}
-                      {subChild.children.length > 0 && (
-                        <button
-                          style={{
-                            position: 'absolute',
-                            top: '-15px',
-                            right: '-15px',
-                            fontSize: '16px',
-                            cursor: 'pointer',
-                            background: 'transparent',
-                            border: 'none',
-                            color: 'white',
-                          }}
-                          onClick={() => removeChildNode(0, index)} // Remove sub-child node
-                        >
-                          -
-                        </button>
-                      )}
+                      <button className="plus" onClick={() => addChildNode(index)}>+</button>
+                      <button className="minus" onClick={() => removeChildNode(index, parentIndex)}>-</button>
                     </div>
+
                     <input
                       type="number"
-                      className={styles.inputNoSpinner} // Apply the class here
+                      className={styles.inputNoSpinner}
                       value={subChild.value}
-                      onChange={(e) => adjustNodeValue(index, parseFloat(e.target.value), parentIndex)} // Adjust value of sub-child node
+                      onChange={(e) => adjustNodeValue(index, parseFloat(e.target.value), parentIndex)}
                       step="0.01"
                       style={{ marginTop: '10px', width: '100%' }}
                     />
@@ -226,5 +106,20 @@ const FractionNodeApp = () => {
     </Container>
   );
 };
+
+// Helper function to style nodes dynamically
+const nodeStyle = (size: number, color: string = "steelblue") => ({
+  width: `${size}px`,
+  height: `${size}px`,
+  borderRadius: '50%',
+  backgroundColor: color,
+  color: 'white',
+  fontWeight: 'bold',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: '5px',
+  position: 'relative',
+});
 
 export default FractionNodeApp;
