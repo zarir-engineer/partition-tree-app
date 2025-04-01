@@ -1,83 +1,52 @@
 "use client";
 import { useState } from "react";
-import { Container } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./styles/FractionNodeApp.module.css";
 
-const FractionNodeApp = () => {
-  // Define the tree structure with a root node
-  const [data, setData] = useState({
-    value: 66.67, // Root node value
-    children: Array(8).fill({ value: 8.33, children: [] }), // 8 child nodes, each 8.33
-  });
+const CloudSpinner = ({ min = 0, max = 100, step = 1, initialValue = 50, onChange }) => {
+  const [value, setValue] = useState(initialValue);
 
-  // Adjust the value of a child node while maintaining the sum
-  const adjustNodeValue = (index, value, parentIndex) => {
-    const newChildren = [...data.children];
-    newChildren[parentIndex].children[index].value = value;
-
-    // Normalize the other children so the total sum remains unchanged
-    const total = newChildren[parentIndex].children.reduce(
-      (sum, child) => sum + child.value,
-      0
-    );
-
-    if (total !== newChildren[parentIndex].value) {
-      newChildren[parentIndex].children.forEach((child, idx) => {
-        if (idx !== index) {
-          child.value =
-            (newChildren[parentIndex].value - value) /
-            (newChildren[parentIndex].children.length - 1);
-        }
-      });
-    }
-    setData({ ...data, children: newChildren });
-  };
-
-  // Function to add a child node
-  const addChildNode = (index) => {
-    const newChildren = [...data.children];
-    newChildren[index].children.push({ value: 8.33, children: [] });
-    setData({ ...data, children: newChildren });
-  };
-
-  // Function to remove a child node
-  const removeChildNode = (index, parentIndex) => {
-    const newChildren = [...data.children];
-    newChildren[parentIndex].children.splice(index, 1);
-    setData({ ...data, children: newChildren });
+  const handleChange = (delta) => {
+    let newValue = Math.min(max, Math.max(min, value + delta));
+    setValue(newValue);
+    if (onChange) onChange(newValue);
   };
 
   return (
-    <Container className="my-4">
-      <div className="d-flex justify-content-center mb-4">
-        {/* Root node */}
-        <div className={styles.node}>{data.value.toFixed(2)}</div>
+    <div className="relative flex flex-col items-center">
+      {/* Cloud Shape */}
+      <div className="relative bg-blue-300 w-24 h-16 rounded-full flex items-center justify-center shadow-lg">
+        <div className="absolute bg-blue-300 w-16 h-16 rounded-full -top-4 left-2"></div>
+        <div className="absolute bg-blue-300 w-12 h-12 rounded-full -top-6 right-3"></div>
+        <span className="text-white font-bold text-xl">{value}</span>
       </div>
-
-      {/* Render child nodes */}
-      <div className="d-flex justify-content-center flex-wrap">
-        {data.children.map((child, parentIndex) => (
-          <div key={parentIndex} className="d-flex flex-column align-items-center">
-            <div className={styles.node}>{child.value.toFixed(2)}</div>
-            <input
-              type="number"
-              className={styles.inputNoSpinner}
-              value={child.value}
-              onChange={(e) =>
-                adjustNodeValue(0, parseFloat(e.target.value), parentIndex)
-              }
-              step="0.01"
-            />
-            <button onClick={() => addChildNode(parentIndex)}>+</button>
-            {child.children.length > 0 && (
-              <button onClick={() => removeChildNode(0, parentIndex)}>-</button>
-            )}
-          </div>
-        ))}
+      {/* Controls */}
+      <div className="flex mt-2 space-x-2">
+        <button
+          className="w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center text-lg font-bold shadow"
+          onClick={() => handleChange(-step)}
+        >
+          -
+        </button>
+        <button
+          className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-lg font-bold shadow"
+          onClick={() => handleChange(step)}
+        >
+          +
+        </button>
       </div>
-    </Container>
+    </div>
   );
 };
 
-export default FractionNodeApp;
+const CloudSpinnerGrid = () => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 border-t border-gray-300">
+      {[...Array(8)].map((_, index) => (
+        <div key={index} className="border border-gray-300 p-4 flex justify-center">
+          <CloudSpinner />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default CloudSpinnerGrid;
