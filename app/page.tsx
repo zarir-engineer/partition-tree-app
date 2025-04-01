@@ -1,4 +1,3 @@
-"use client";
 import CloudSpinnerGrid from "@/components/CloudSpinnerGrid";
 
 const Page = () => {
