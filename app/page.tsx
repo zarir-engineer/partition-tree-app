@@ -34,7 +34,7 @@ const TreeComponent = () => {
     });
   };
 
-  // Function to add a child node
+  // Function to add a new child node
   const addChildNode = () => {
     const newChild = { value: 0, children: [] };
     setData({
@@ -55,7 +55,7 @@ const TreeComponent = () => {
   return (
     <Container className="my-4">
       <div className="d-flex justify-content-center mb-4">
-        {/* Root node without "+" or "-" buttons */}
+        {/* Root node */}
         <div
           className={styles.node}
           style={{
@@ -72,11 +72,12 @@ const TreeComponent = () => {
             position: 'relative',
           }}
         >
-          {data.value}
+          {data.value.toFixed(2)} {/* Display the value inside the root node */}
         </div>
       </div>
 
       <div className="d-flex justify-content-center flex-wrap">
+        {/* Child nodes */}
         {data.children.map((child, index) => (
           <div key={index} className="d-flex justify-content-center my-3">
             <div
@@ -95,8 +96,9 @@ const TreeComponent = () => {
                 position: 'relative',
               }}
             >
-              {child.value.toFixed(2)}
+              {child.value.toFixed(2)} {/* Display the value inside each child node */}
 
+              {/* "+" Button to add a node */}
               <button
                 style={{
                   position: 'absolute',
@@ -113,6 +115,7 @@ const TreeComponent = () => {
                 +
               </button>
 
+              {/* "-" Button to remove a node */}
               {data.children.length > 1 && (
                 <button
                   style={{
@@ -131,13 +134,6 @@ const TreeComponent = () => {
                 </button>
               )}
             </div>
-            <input
-              type="number"
-              value={child.value}
-              onChange={(e) => adjustNodeValue(index, parseFloat(e.target.value))}
-              step="0.01"
-              style={{ marginTop: '10px', width: '100%' }}
-            />
           </div>
         ))}
       </div>
