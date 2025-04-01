@@ -1,137 +1,115 @@
-"use client";
+import { useEffect, useRef, useState } from "react";
+import * as d3 from "d3";
 
-import React, { useState, useEffect, useRef } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-// Helper function to normalize fractions
-const normalizeFractions = (nodes: number[]) => {
-  const total = nodes.reduce((acc, value) => acc + value, 0);
-  const remainingValue = 66.67 - total;
-
-  const adjustedNodes = nodes.map((value) => {
-    // Adjust based on the remaining value
-    const adjustment = remainingValue / (nodes.length - 1);
-    return value + adjustment;
+const TreeComponent = () => {
+  // State to manage the root data for the tree
+  const [data, setData] = useState<any>({
+    value: 66.67, // Root node value
+    children: Array(8).fill({ value: 1 / 8, children: [] }), // 8 child nodes with initial value 1/8
   });
 
-  return adjustedNodes;
-};
+  const svgRef = useRef<SVGSVGElement | null>(null);
 
-// Define TreeNode before using it in the Page component
-const TreeNode = ({
-  index,
-  value,
-  updateValue,
-  addSubNode,
-  removeSubNode,
-}: any) => {
-  return (
-    <div style={{ marginLeft: "20px", borderLeft: "1px solid #ccc", paddingLeft: "10px", display: 'flex', alignItems: 'center' }}>
-      <input
-        type="number"
-        className="form-control d-inline w-25"
-        value={value.toFixed(2)}
-        onChange={(e) => updateValue(index, parseFloat(e.target.value))}
-        step="0.01"
-        style={{ marginRight: '10px' }}
-      />
-      <button className="btn btn-success btn-sm" onClick={() => addSubNode(index)}>
-        ➕ Add
-      </button>
-      <button className="btn btn-danger btn-sm ms-2" onClick={() => removeSubNode(index)} disabled={index === 0}>
-        ➖ Remove
-      </button>
-    </div>
-  );
-};
+  // Function to render the tree
+  const renderTree = () => {
+    if (!svgRef.current) return;
+    const width = 600, height = 400;
+    const svg = d3.select(svgRef.current).attr("width", width).attr("height", height);
+    svg.selectAll("*").remove();
 
-const FractionTree = () => {
-  const [data, setData] = useState({
-    value: 66.67,
-    children: Array(8).fill(8.33), // 8 nodes initialized with 1/8 of the top value
-  });
+    const hierarchy = d3.hierarchy(data, (d: any) => d.children);
+    const treeLayout = d3.tree<any>().size([width - 100, height - 100]);
+    treeLayout(hierarchy);
 
-  const updateValue = (index: number, newValue: number) => {
-    const updatedNodes = [...data.children];
-    updatedNodes[index] = newValue;
+    // Draw links between nodes
+    svg.selectAll(".link")
+      .data(hierarchy.links())
+      .enter()
+      .append("line")
+      .attr("x1", (d) => (d.source?.x ?? 0) + 50)
+      .attr("y1", (d) => (d.source?.y ?? 0) + 50)
+      .attr("x2", (d) => (d.target?.x ?? 0) + 50)
+      .attr("y2", (d) => (d.target?.y ?? 0) + 50)
+      .attr("stroke", "#999");
 
-    // Normalize the node values to keep the total equal to 66.67
-    const normalizedValues = normalizeFractions(updatedNodes);
+    // Draw nodes as circles
+    const nodes = svg.selectAll(".node")
+      .data(hierarchy.descendants())
+      .enter()
+      .append("g")
+      .attr("transform", (d) => `translate(${(d.x ?? 0) + 50}, ${(d.y ?? 0) + 50})`);
 
-    setData({
-      ...data,
-      children: normalizedValues,
+    // Add circles for nodes (spheres)
+    nodes.append("circle")
+      .attr("r", 20)
+      .attr("fill", "steelblue");
+
+    // Add the value text inside the circles
+    nodes.append("text")
+      .attr("dy", 4)
+      .attr("text-anchor", "middle")
+      .attr("fill", "white")
+      .text((d) => Math.round(d.data.value));
+
+    // Add "+" and "-" buttons for adding and removing subnodes
+    nodes.each(function (d) {
+      const nodeGroup = d3.select(this);
+
+      // "+" Button to add a node (Positioned top-left)
+      nodeGroup.append("text")
+        .attr("x", -30) // Positioning "+" button to the left of the node (top-left)
+        .attr("dy", -25) // Above the node (top)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "16px")
+        .attr("cursor", "pointer")
+        .text("+")
+        .on("click", () => addSubNode(d)); // Assuming addSubNode function is defined elsewhere
+
+      // "-" Button to remove a node (Positioned top-right, only for non-root nodes)
+      if (d.depth > 0) {
+        nodeGroup.append("text")
+          .attr("x", 30) // Positioning "-" button to the right of the node (top-right)
+          .attr("dy", -25) // Above the node (top)
+          .attr("text-anchor", "middle")
+          .attr("font-size", "16px")
+          .attr("cursor", "pointer")
+          .text("-")
+          .on("click", () => removeNode(d)); // Assuming removeNode function is defined elsewhere
+      }
     });
+
+    // Additional styling for nodes, e.g., adding a border to make them look like spheres
+    nodes.select("circle")
+      .style("stroke", "#000")
+      .style("stroke-width", 2);
   };
 
-  const addSubNode = (index: number) => {
-    if (data.children.length < 10) { // Restrict to no more than 10 child nodes
-      const updatedNodes = [...data.children];
-      updatedNodes.splice(index + 1, 0, 8.33); // Insert new node after the current node
-      const normalizedValues = normalizeFractions(updatedNodes);
-      setData({
-        ...data,
-        children: normalizedValues,
-      });
+  // Add a new sub-node to the tree
+  const addSubNode = (node: any) => {
+    const newNode = { value: 0, children: [] }; // Example of a new node
+    node.children.push(newNode);
+    setData({ ...data }); // Trigger a re-render of the tree by updating the state
+  };
+
+  // Remove a node from the tree
+  const removeNode = (node: any) => {
+    if (node.parent) {
+      const parentNode = node.parent;
+      parentNode.children = parentNode.children.filter((child: any) => child !== node);
+      setData({ ...data }); // Trigger a re-render of the tree by updating the state
     }
   };
 
-  const removeSubNode = (index: number) => {
-    if (data.children.length > 1 && index > 0) { // Prevent removing the first node (top node)
-      const updatedNodes = [...data.children];
-      updatedNodes.splice(index, 1); // Remove the selected node
-      const normalizedValues = normalizeFractions(updatedNodes);
-      setData({
-        ...data,
-        children: normalizedValues,
-      });
-    }
-  };
+  // Call renderTree after the data or component has been mounted
+  useEffect(() => {
+    renderTree();
+  }, [data]); // Run renderTree whenever the data changes
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center fw-bold" style={{ fontFamily: "Georgia, serif" }}>
-        Fractional Tree with Node Adjustment
-      </h2>
-
-      <div className="d-flex justify-content-start align-items-center mt-3">
-        <strong className="me-2">Top Value:</strong>
-        <input
-          type="number"
-          className="form-control w-25"
-          value={data.value.toFixed(2)}
-          disabled
-        />
-      </div>
-
-      <div className="d-flex justify-content-center mt-3">
-        <div className="w-50" style={{ borderRight: "1px solid #ccc", paddingRight: "20px" }}>
-          <div>
-            <strong>Top Node: </strong>
-            <input
-              type="number"
-              className="form-control w-25"
-              value={data.value.toFixed(2)}
-              disabled
-            />
-          </div>
-
-          {data.children.map((value, index) => (
-            <TreeNode
-              key={index}
-              index={index}
-              value={value}
-              updateValue={updateValue}
-              addSubNode={addSubNode}
-              removeSubNode={removeSubNode}
-            />
-          ))}
-        </div>
-      </div>
+    <div>
+      <svg ref={svgRef}></svg>
     </div>
   );
 };
 
-export default function Page() {
-  return <FractionTree />;
-}
+export default TreeComponent;
