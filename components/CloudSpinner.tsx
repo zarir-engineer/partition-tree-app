@@ -16,10 +16,10 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
   min = 0,
   max = 100,
   step = 1,
-  initialValue = 50,
+  initialValue,  // ✅ Ensure it's being used
   onChange,
 }) => {
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState<number>(initialValue);  // ✅ Explicit type
 
   const handleChange = (delta: number) => {
     const newValue = Math.min(max, Math.max(min, value + delta));
