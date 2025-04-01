@@ -95,7 +95,7 @@ const TreeComponent = () => {
         </div>
       </div>
 
-      <div className="d-flex justify-content-center flex-wrap">
+      <div className="d-flex justify-content-center flex-wrap" style={{ gap: '30px' }}>
         {/* Render child nodes dynamically */}
         {data.children.map((child, parentIndex) => (
           <div key={parentIndex} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
@@ -122,17 +122,17 @@ const TreeComponent = () => {
               <button
                 style={{
                   position: 'absolute',
-                  top: '-12px',
-                  left: '-12px',
+                  top: '-25px',  // Space between node and button
+                  left: '-25px', // Space from left edge of node
                   fontSize: '18px',
                   cursor: 'pointer',
                   background: 'transparent',
                   border: 'none',
                   color: 'white',
-                  padding: '5px',
+                  padding: '8px',
                   borderRadius: '50%',
-                  width: '24px',
-                  height: '24px',
+                  width: '32px',
+                  height: '32px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -147,17 +147,17 @@ const TreeComponent = () => {
                 <button
                   style={{
                     position: 'absolute',
-                    top: '-12px',
-                    right: '-12px',
+                    top: '-25px',  // Space between node and button
+                    right: '-25px', // Space from right edge of node
                     fontSize: '18px',
                     cursor: 'pointer',
                     background: 'transparent',
                     border: 'none',
                     color: 'white',
-                    padding: '5px',
+                    padding: '8px',
                     borderRadius: '50%',
-                    width: '24px',
-                    height: '24px',
+                    width: '32px',
+                    height: '32px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -171,7 +171,7 @@ const TreeComponent = () => {
 
             {/* Render child nodes (if any) */}
             {child.children.map((subChild, childIndex) => (
-              <div key={childIndex} className="d-flex justify-content-center my-3" style={{ marginTop: '30px' }}>
+              <div key={childIndex} className="d-flex justify-content-center my-3" style={{ marginTop: '40px' }}>
                 <div
                   className={styles.node}
                   style={{
