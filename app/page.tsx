@@ -1,115 +1,144 @@
 "use client";
-import React, { useState } from 'react';  // Import necessary libraries: React and useState hook
-import { Button, Container, Row, Col } from 'react-bootstrap';  // Import Bootstrap components for styling
-import styles from './styles/FractionNodeApp.module.css';  // Import the CSS module
+import { useState } from "react";  // Import necessary libraries: React and useState hook
+import { Container } from "react-bootstrap";  // Import Bootstrap components for styling
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import styles from './styles/FractionNodeApp.module.css';  // Import your custom styles
 
-
-
-// This is the main component of the app
 const FractionNodeApp = () => {
+  const [data, setData] = useState<any>({
+    value: 66.67, // Root node value
+    children: Array(8).fill({ value: 1 / 8, children: [] }), // 8 child nodes with initial value 1/8
+  });
 
-  // "nodes" is an array that stores the values of 8 child nodes.
-  // Initially, each child node has a value of 1/8 (0.125).
-  const [nodes, setNodes] = useState(Array(8).fill(1/8));
-
-  // "topNode" is the main or "top" node. Initially, it holds a value of 66.67.
-  const [topNode, setTopNode] = useState(66.67);
-
-  // This function allows the user to modify the value of a node.
-  // It takes in the node index (which node to change) and the new value.
-  const handleValueChange = (index: number, value: number) => {
-    // Make a copy of the current nodes array (since React requires you to not modify state directly)
-    const updatedNodes = [...nodes];
-
-    // Change the value of the node at the specified index
-    updatedNodes[index] = value;
-
-    // Now we need to update the other nodes so that all values add up to 1 (or 100%).
-    // First, calculate the remaining value that is missing to reach 1 (100%).
-    const remainingValue = 1 - updatedNodes.reduce((acc, node) => acc + node, 0);
-
-    // Update all other nodes with an equal share of the remaining value.
-    updatedNodes.forEach((_, i) => {
-      if (i !== index) {
-        updatedNodes[i] = remainingValue / (nodes.length - 1);
-      }
-    });
-
-    // Finally, update the state with the new values of all the nodes
-    setNodes(updatedNodes);
-  };
-
-  // This function adds a new node with an initial value of 1/8 (0.125).
-  const addNode = (index: number) => {
-    // Copy the current nodes array
-    const updatedNodes = [...nodes];
-
-    // Insert a new node right after the specified index
-    updatedNodes.splice(index + 1, 0, 1 / 8);
-
-    // Update the state with the new array of nodes
-    setNodes(updatedNodes);
-  };
-
-  // This function removes a node from the array at the specified index.
-  const removeNode = (index: number) => {
-    if (nodes.length > 1) {
-      // Copy the current nodes array
-      const updatedNodes = [...nodes];
-
-      // Remove the node at the specified index
-      updatedNodes.splice(index, 1);
-
-      // Update the state with the new array of nodes
-      setNodes(updatedNodes);
+  // Function to adjust node values
+  const adjustNodeValue = (index: number, value: number) => {
+    const newChildren = [...data.children];
+    newChildren[index].value = value;
+    const total = newChildren.reduce((sum, child) => sum + child.value, 0);
+    // Normalize the other children to make the sum equal to 1
+    if (total !== 1) {
+      newChildren.forEach((child, idx) => {
+        if (idx !== index) {
+          child.value = (1 - value) / (newChildren.length - 1);
+        }
+      });
     }
+    setData({
+      ...data,
+      children: newChildren,
+    });
   };
 
-  // This function adjusts the value of the top node (by adding or subtracting a fixed amount)
-  const changeTopNodeValue = (delta: number) => {
-    setTopNode(prev => Math.max(0, prev + delta));  // Prevent the top node value from going below 0
+  // Function to add a new child node
+  const addChildNode = () => {
+    const newNode = { value: 1 / 8, children: [] }; // Example of a new child node
+    setData({
+      ...data,
+      children: [...data.children, newNode],
+    });
   };
 
-  // The UI of the app: using Bootstrap components for layout and styling
+  // Function to remove a child node
+  const removeChildNode = (index: number) => {
+    const newChildren = data.children.filter((_, i) => i !== index);
+    setData({
+      ...data,
+      children: newChildren,
+    });
+  };
+
   return (
-    <Container className="mt-5">  {/* This creates a container to hold all the content */}
-
-      {/* A section for the top node, displaying its value and allowing adjustments with + and - buttons */}
-      <div className="text-center mb-4">
-        <div className="node">
-          <div className="d-flex justify-content-between align-items-center">
-            {/* Add button for top node */}
-            <Button className="add-btn" onClick={() => changeTopNodeValue(5)}>+</Button>
-            {/* Display the top node value */}
-            <span>{topNode.toFixed(2)}</span>
-            {/* Remove button for top node */}
-            <Button className="remove-btn" onClick={() => changeTopNodeValue(-5)}>-</Button>
-          </div>
+    <Container className="my-4">
+      <div className="d-flex justify-content-center mb-4">
+        {/* Root node without "+" or "-" buttons */}
+        <div
+          className={styles.node} // Custom styles for the root node
+          style={{
+            width: '100px',
+            height: '100px',
+            borderRadius: '50%',
+            backgroundColor: 'steelblue',
+            color: 'white',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginRight: '20px', // Space between root and child nodes
+            position: 'relative',
+          }}
+        >
+          {data.value}
         </div>
       </div>
 
-      {/* A section to display 8 child nodes below the top node */}
-      <Row className="justify-content-center">
-        {/* Loop through the nodes array and create a node for each entry */}
-        {nodes.map((nodeValue, index) => (
-          <Col key={index} xs={3} className="d-flex justify-content-center mb-4">
-            <div className="node">
-              <div className="d-flex justify-content-between align-items-center">
-                {/* Add button for each node */}
-                <Button className="add-btn" onClick={() => addNode(index)}>+</Button>
-                {/* Display the value of each node, converted to percentage */}
-                <span>{(nodeValue * 100).toFixed(2)}%</span>
-                {/* Remove button for each node */}
-                <Button className="remove-btn" onClick={() => removeNode(index)}>-</Button>
-              </div>
-            </div>
-          </Col>
-        ))}
-      </Row>
+      <div className="d-flex justify-content-center flex-wrap">
+        {/* Child nodes with "+" and "-" buttons */}
+        {data.children.map((child, index) => (
+          <div key={index} className="d-flex justify-content-center my-3">
+            <div
+              className={styles.node} // Custom styles for child nodes
+              style={{
+                width: '70px',
+                height: '70px',
+                borderRadius: '50%',
+                backgroundColor: 'steelblue',
+                color: 'white',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '5px', // Space between nodes
+                position: 'relative',
+              }}
+            >
+              {child.value.toFixed(2)}
 
-      {/* Optional, add lines or SVG here to visually connect the nodes */}
-      {/* <svg> for connecting the nodes */}
+              {/* "+" Button to add a node */}
+              <button
+                style={{
+                  position: 'absolute',
+                  top: '-20px',
+                  left: '-20px',
+                  fontSize: '18px',
+                  cursor: 'pointer',
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'white',
+                }}
+                onClick={addChildNode}
+              >
+                +
+              </button>
+
+              {/* "-" Button to remove a node */}
+              {data.children.length > 1 && (
+                <button
+                  style={{
+                    position: 'absolute',
+                    top: '-20px',
+                    right: '-20px',
+                    fontSize: '18px',
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    border: 'none',
+                    color: 'white',
+                  }}
+                  onClick={() => removeChildNode(index)}
+                >
+                  -
+                </button>
+              )}
+            </div>
+            <input
+              type="number"
+              value={child.value}
+              onChange={(e) => adjustNodeValue(index, parseFloat(e.target.value))}
+              step="0.01"
+              style={{ marginTop: '10px', width: '100%' }}
+            />
+          </div>
+        ))}
+      </div>
     </Container>
   );
 };
