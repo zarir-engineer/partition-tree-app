@@ -17,8 +17,9 @@ const FractionNodeApp = () => {
 
     // Normalize the other children values to make sure the sum stays the same
     const total = newChildren[parentIndex].children.reduce((sum: number, child: any) => sum + child.value, 0);
+
     if (total !== newChildren[parentIndex].value) {
-      newChildren[parentIndex].children.forEach((child, idx) => {
+      newChildren[parentIndex].children.forEach((child: any, idx: number) => {
         if (idx !== index) {
           child.value = (newChildren[parentIndex].value - value) / (newChildren[parentIndex].children.length - 1);
         }
