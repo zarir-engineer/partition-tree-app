@@ -11,8 +11,8 @@ type Node = {
 
 const TreeComponent = () => {
   const [data, setData] = useState<Node>({
-    value: 66.67,
-    children: Array(8).fill({ value: 1 / 8, children: [] }),
+    value: 66.67,  // Root node value
+    children: Array(8).fill({ value: 1 / 8, children: [] }),  // Initial children with equal value
   });
 
   // Function to adjust node values
@@ -34,18 +34,25 @@ const TreeComponent = () => {
     });
   };
 
-  // Function to add a new child node
-  const addChildNode = () => {
-    const newChild = { value: 0.1, children: [] }; // Adding a node with a default value of 0.1
+  // Function to add a new child node below the current node and divide value equally
+  const addChildNode = (index: number) => {
+    const newChildren = [...data.children];
+    const parentValue = newChildren[index].value;
+    newChildren[index].children.push({ value: parentValue / 2, children: [] });
+    newChildren[index].children.push({ value: parentValue / 2, children: [] });
+
+    // Adjust the parent's value since it's now divided among the new children
+    newChildren[index].value = parentValue / 2;
     setData({
       ...data,
-      children: [...data.children, newChild],
+      children: newChildren,
     });
   };
 
   // Function to remove a child node
-  const removeChildNode = (index: number) => {
-    const newChildren = data.children.filter((_, i) => i !== index);
+  const removeChildNode = (parentIndex: number, childIndex: number) => {
+    const newChildren = [...data.children];
+    newChildren[parentIndex].children.splice(childIndex, 1);  // Remove the specific child node
     setData({
       ...data,
       children: newChildren,
@@ -72,14 +79,15 @@ const TreeComponent = () => {
             position: 'relative',
           }}
         >
-          {data.value.toFixed(2)} {/* Display the value inside the root node */}
+          {data.value.toFixed(2)} {/* Root node value */}
         </div>
       </div>
 
       <div className="d-flex justify-content-center flex-wrap">
-        {/* Child nodes */}
-        {data.children.map((child, index) => (
-          <div key={index} className="d-flex justify-content-center my-3">
+        {/* Render child nodes */}
+        {data.children.map((child, parentIndex) => (
+          <div key={parentIndex} className="d-flex justify-content-center my-3" style={{ position: 'relative' }}>
+            {/* Parent node */}
             <div
               className={styles.node}
               style={{
@@ -96,7 +104,7 @@ const TreeComponent = () => {
                 position: 'relative',
               }}
             >
-              {child.value.toFixed(2)} {/* Display the value inside each child node */}
+              {child.value.toFixed(2)} {/* Display the value of the parent node */}
 
               {/* "+" Button to add a node */}
               <button
@@ -110,7 +118,7 @@ const TreeComponent = () => {
                   border: 'none',
                   color: 'white',
                 }}
-                onClick={addChildNode}
+                onClick={() => addChildNode(parentIndex)} // Add child node below the parent
               >
                 +
               </button>
@@ -128,12 +136,36 @@ const TreeComponent = () => {
                     border: 'none',
                     color: 'white',
                   }}
-                  onClick={() => removeChildNode(index)}
+                  onClick={() => removeChildNode(parentIndex, 0)} // Remove the first child node
                 >
                   -
                 </button>
               )}
             </div>
+
+            {/* Render child nodes (if any) */}
+            {child.children.map((subChild, childIndex) => (
+              <div key={childIndex} className="d-flex justify-content-center my-3" style={{ marginTop: '30px' }}>
+                <div
+                  className={styles.node}
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    backgroundColor: 'orange',
+                    color: 'white',
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '5px',
+                    position: 'relative',
+                  }}
+                >
+                  {subChild.value.toFixed(2)} {/* Display value of the child node */}
+                </div>
+              </div>
+            ))}
           </div>
         ))}
       </div>
