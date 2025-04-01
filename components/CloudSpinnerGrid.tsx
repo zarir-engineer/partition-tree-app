@@ -17,12 +17,14 @@ const CloudSpinnerGrid: React.FC = () => {
     const newValues = [...values];
     newValues[index] = newValue;
 
+    // Update only unedited values to keep the total 1
     const total = newValues.reduce((sum, value) => sum + value, 0);
-    const remainingValue = 1 - total;
+    const remainingValue = 1 - newValue;
 
     let remainingSum = 0;
     let remainingCount = 0;
 
+    // Adjust the unedited values
     newValues.forEach((value, idx) => {
       if (!edited[idx]) {
         remainingSum += value;
@@ -30,6 +32,7 @@ const CloudSpinnerGrid: React.FC = () => {
       }
     });
 
+    // Evenly distribute remaining value to unedited spinners
     if (remainingCount > 0) {
       const perRemaining = remainingValue / remainingCount;
       newValues.forEach((value, idx) => {
@@ -39,17 +42,12 @@ const CloudSpinnerGrid: React.FC = () => {
       });
     }
 
-    const finalTotal = newValues.reduce((sum, value) => sum + value, 0);
-    if (finalTotal !== 1) {
-      newValues[newValues.length - 1] += 1 - finalTotal;
-    }
-
     setValues(newValues);
   };
 
   const handleValueChange = (index: number, newValue: number) => {
     const newEdited = [...edited];
-    newEdited[index] = true;
+    newEdited[index] = true;  // Mark this spinner as edited
     setEdited(newEdited);
     updateValues(index, newValue);
   };
@@ -62,22 +60,31 @@ const CloudSpinnerGrid: React.FC = () => {
   const total = values.reduce((sum, value) => sum + value, 0).toFixed(3);
 
   return (
-    <div className="d-flex flex-column align-items-center">
-      <div className="d-flex justify-content-between w-100 mb-3">
-        <span className="font-weight-bold">Total: {total}</span>
-        <button onClick={handleReset} className="btn btn-primary">Reset</button>
+    <div className="d-flex flex-column justify-center align-items-center p-4">
+      {/* Total and Reset Button positioned top-right */}
+      <div className="d-flex justify-content-end w-100 mb-3">
+        <span className="font-bold text-xl mr-4">Total: {total}</span>
+        <button
+          onClick={handleReset}
+          className="btn btn-primary"
+        >
+          Reset
+        </button>
       </div>
 
-      <div className="row w-100">
-        {names.map((name, index) => (
-          <div className="col-1" key={index}>
-            <CloudSpinner
-              name={name}
-              value={values[index]}
-              onChange={(newValue) => handleValueChange(index, newValue)}
-            />
-          </div>
-        ))}
+      {/* Grid with better spacing */}
+      <div className="container">
+        <div className="row g-5"> {/* 'g-4' for spacing between columns */}
+          {names.map((name, index) => (
+            <div key={index} className="col-6 col-md-3"> {/* Responsive columns */}
+              <CloudSpinner
+                name={name}
+                value={values[index]}
+                onChange={(newValue) => handleValueChange(index, newValue)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
