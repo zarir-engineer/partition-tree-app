@@ -64,22 +64,26 @@ input[type="number"] {
 
 /* Add these styles to your FractionNodeApp.module.css or global styles */
 
+/* Base button styling */
 button {
   position: absolute;
   font-size: 16px;
   cursor: pointer;
   background: transparent;
   border: none;
-  color: white;
   z-index: 1; /* Ensure the buttons are above other content */
 }
 
+/* Plus button styling (green) */
 button.plus {
   top: -20px;
   left: -20px;
+  color: green; /* Set color to green for the plus button */
 }
 
+/* Minus button styling (light red) */
 button.minus {
   top: -20px;
   right: -20px;
+  color: lightcoral; /* Set color to light red for the minus button */
 }

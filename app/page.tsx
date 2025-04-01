@@ -109,41 +109,23 @@ const FractionNodeApp = () => {
             >
               {child.value.toFixed(2)}
 
-              {/* "+" Button */}
-              <button
-                style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  left: '-20px',
-                  fontSize: '18px',
-                  cursor: 'pointer',
-                  background: 'transparent',
-                  border: 'none',
-                  color: 'white',
-                }}
-                onClick={() => addChildNode(parentIndex)} // Add child to the current node
-              >
-                +
-              </button>
-
-              {/* "-" Button */}
-              {child.children.length > 0 && (
+                {/* "+" Button */}
                 <button
-                  style={{
-                    position: 'absolute',
-                    top: '-20px',
-                    right: '-20px',
-                    fontSize: '18px',
-                    cursor: 'pointer',
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'white',
-                  }}
-                  onClick={() => removeChildNode(0, parentIndex)} // Remove first child node
+                  className="plus"
+                  onClick={() => addChildNode(parentIndex)} // Add child to the current node
                 >
-                  -
+                  +
                 </button>
-              )}
+
+                {/* "-" Button */}
+                {child.children.length > 0 && (
+                  <button
+                    className="minus"
+                    onClick={() => removeChildNode(0, parentIndex)} // Remove first child node
+                  >
+                    -
+                  </button>
+                )}
             </div>
             <input
               type="number"
