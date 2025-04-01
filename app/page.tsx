@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as d3 from "d3";
 import "bootstrap/dist/css/bootstrap.min.css";
+import TreeNode from "./TreeNode"; // Import TreeNode component
 
 const PartitionTree = () => {
   const [data, setData] = useState({
