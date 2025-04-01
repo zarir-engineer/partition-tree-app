@@ -5,21 +5,27 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from './styles/FractionNodeApp.module.css';
 
 type Node = {
-  value: number;
+  value: number; // Store the decimal value
+  fraction: string; // Store the fraction as a string (e.g., '1/8')
   children: Node[];
 };
 
 const TreeComponent = () => {
   const [data, setData] = useState<Node>({
-    value: 66.67,  // Root node value
+    value: 1,  // Root node value is set to 1
+    fraction: "1",  // Root node fraction is '1'
     children: [],  // Initially no children
   });
 
   // Function to adjust node values
   const adjustNodeValue = (index: number, value: number) => {
     const newChildren = [...data.children];
-    newChildren[index].value = value;
     const total = newChildren.reduce((sum, child) => sum + child.value, 0);
+
+    // Update the fraction and decimal value
+    newChildren[index].value = value;
+    newChildren[index].fraction = `1/${(1 / value).toFixed(2)}`; // Example: "1/8.12"
+
     // Normalize the other children to make the sum equal to 1
     if (total !== 1) {
       newChildren.forEach((child, idx) => {
@@ -38,11 +44,16 @@ const TreeComponent = () => {
   const addChildNode = (index: number) => {
     const newChildren = [...data.children];
     const parentValue = newChildren[index].value;
-    newChildren[index].children.push({ value: parentValue / 2, children: [] });
-    newChildren[index].children.push({ value: parentValue / 2, children: [] });
+    const newValue = (parentValue + 0.12).toFixed(2); // Increase the value slightly on addition
+
+    newChildren[index].children.push({
+      value: parseFloat(newValue),
+      fraction: `1/${(1 / parseFloat(newValue)).toFixed(2)}`, // Update fraction accordingly
+      children: [],
+    });
 
     // Adjust the parent's value since it's now divided among the new children
-    newChildren[index].value = parentValue / 2;
+    newChildren[index].value = parseFloat(newValue);
     setData({
       ...data,
       children: newChildren,
@@ -79,7 +90,7 @@ const TreeComponent = () => {
             position: 'relative',
           }}
         >
-          {data.value.toFixed(2)} {/* Root node value */}
+          {data.fraction} {/* Display the fraction of the root node */}
         </div>
       </div>
 
@@ -104,7 +115,7 @@ const TreeComponent = () => {
                 position: 'relative',
               }}
             >
-              {child.value.toFixed(2)} {/* Display the value of the parent node */}
+              {child.fraction} {/* Display the fraction of the parent node */}
 
               {/* "+" Button to add a node */}
               <button
@@ -162,7 +173,7 @@ const TreeComponent = () => {
                     position: 'relative',
                   }}
                 >
-                  {subChild.value.toFixed(2)} {/* Display value of the child node */}
+                  {subChild.fraction} {/* Display fraction of the child node */}
                 </div>
               </div>
             ))}
