@@ -24,3 +24,34 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* column layout */
+
+/* globals.css or add to a specific CSS module */
+
+.container {
+  display: flex;
+  height: 100vh; /* Takes full viewport height */
+}
+
+.column {
+  flex: 1; /* Each column takes up equal space */
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto; /* Scroll if content overflows */
+}
+
+.column:nth-child(1) {
+  background-color: #f0f0f0; /* Example color for Diagram */
+}
+
+.column:nth-child(2) {
+  background-color: #e0e0e0; /* Example color for Nodes */
+}
+
+/* Optional: Add media queries for responsiveness */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* Stack columns vertically on smaller screens */
+  }
+}
