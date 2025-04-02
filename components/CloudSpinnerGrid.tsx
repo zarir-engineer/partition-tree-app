@@ -39,31 +39,39 @@ const CloudSpinnerGrid = () => {
   const total = values.reduce((sum, value) => sum + parseFloat(value), 0).toFixed(3);
 
   return (
-    <div className="d-flex flex-column justify-center align-items-center p-4">
-      {/* Total and Reset Button positioned top-right */}
-      <div className="d-flex justify-content-end w-100 mb-3">
-        <span className="font-bold text-xl mr-4">Total: {total}</span>
-        <button onClick={handleReset} className="btn btn-primary ms-3">
-          Reset
-        </button>
-      </div>
+    <>
+      {warning && (
+        <div className="alert alert-danger position-absolute top-0 start-50 translate-middle-x">
+          Total cannot exceed 1!
+        </div>
+      )}
 
-      {/* Grid with 8 columns per row */}
-      <div className="container-fluid px-5">
-        <div className="row g-4"> {/* Ensure spacing between columns */}
-          {names.map((name, index) => (
-            <div key={index} className="col-6 col-md-3 col-lg-3 col-xl-2">
-              <CloudSpinner
-                name={name}
-                value={values[index]}
-                onChange={(newValue) => handleValueChange(index, newValue)}
-                edited={editedIndexes[index]}
-              />
-            </div>
-          ))}
+      <div className="d-flex flex-column justify-center align-items-center p-4">
+        {/* Total and Reset Button positioned top-right */}
+        <div className="d-flex justify-content-end w-100 mb-3">
+          <span className="font-bold text-xl mr-4">Total: {total}</span>
+          <button onClick={handleReset} className="btn btn-primary ms-3">
+            Reset
+          </button>
+        </div>
+
+        {/* Grid with 8 columns per row */}
+        <div className="container-fluid px-5">
+          <div className="row g-4"> {/* Ensure spacing between columns */}
+            {names.map((name, index) => (
+              <div key={index} className="col-6 col-md-3 col-lg-3 col-xl-2">
+                <CloudSpinner
+                  name={name}
+                  value={values[index]}
+                  onChange={(newValue) => handleValueChange(index, newValue)}
+                  edited={editedIndexes[index]}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

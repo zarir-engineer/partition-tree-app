@@ -18,9 +18,12 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({ name, value, onChange, edit
         value={value}
         onChange={(e) => {
           const newValue = parseFloat(e.target.value);
-          onChange(Number.isNaN(newValue) ? 0 : parseFloat(newValue.toFixed(3)));
+          if (newValue + total - value <= 1) { // Ensures total doesn't exceed 1
+            onChange(newValue);
+          }
         }}
         className="form-control"
+        disabled={total >= 1}
       />
     </div>
   );
