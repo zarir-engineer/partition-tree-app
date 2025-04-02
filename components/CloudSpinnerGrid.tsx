@@ -10,8 +10,9 @@ interface Spinner {
   children: Spinner[];
 }
 
+const MAX_CHILD_SPINNERS = 4;
+
 const CloudSpinnerGrid: React.FC = () => {
-  // Initial spinners setup
   const [spinners, setSpinners] = useState<Spinner[]>([
     { name: "Sudarshan-ji", value: 0, edited: false, children: [] },
     { name: "Shripal-ji", value: 0, edited: false, children: [] },
@@ -23,7 +24,19 @@ const CloudSpinnerGrid: React.FC = () => {
     { name: "Aaji", value: 0, edited: false, children: [] },
   ]);
 
-  // Function to update spinner values
+  const updateParentValue = (parentIndex: number) => {
+    setSpinners((prev) =>
+      prev.map((spinner, i) =>
+        i === parentIndex
+          ? {
+              ...spinner,
+              value: spinner.children.reduce((sum, child) => sum + child.value, 0),
+            }
+          : spinner
+      )
+    );
+  };
+
   const handleValueChange = (index: number, newValue: number) => {
     setSpinners((prev) =>
       prev.map((spinner, i) =>
@@ -32,12 +45,7 @@ const CloudSpinnerGrid: React.FC = () => {
     );
   };
 
-  // Function to update child spinner values
-  const handleChildValueChange = (
-    parentIndex: number,
-    childIndex: number,
-    newValue: number
-  ) => {
+  const handleChildValueChange = (parentIndex: number, childIndex: number, newValue: number) => {
     setSpinners((prev) =>
       prev.map((spinner, i) =>
         i === parentIndex
@@ -50,13 +58,13 @@ const CloudSpinnerGrid: React.FC = () => {
           : spinner
       )
     );
+    updateParentValue(parentIndex);
   };
 
-  // Add a new child spinner below the parent
   const handleAddSpinner = (parentIndex: number) => {
     setSpinners((prev) =>
       prev.map((spinner, i) =>
-        i === parentIndex
+        i === parentIndex && spinner.children.length < MAX_CHILD_SPINNERS
           ? {
               ...spinner,
               children: [
@@ -69,7 +77,6 @@ const CloudSpinnerGrid: React.FC = () => {
     );
   };
 
-  // Remove the last child spinner of a parent
   const handleRemoveSpinner = (parentIndex: number) => {
     setSpinners((prev) =>
       prev.map((spinner, i) =>
@@ -78,21 +85,34 @@ const CloudSpinnerGrid: React.FC = () => {
           : spinner
       )
     );
+    updateParentValue(parentIndex);
   };
 
-  // Reset all spinners
+  const handleNameChange = (parentIndex: number, childIndex: number, newName: string) => {
+    setSpinners((prev) =>
+      prev.map((spinner, i) =>
+        i === parentIndex
+          ? {
+              ...spinner,
+              children: spinner.children.map((child, ci) =>
+                ci === childIndex ? { ...child, name: newName } : child
+              ),
+            }
+          : spinner
+      )
+    );
+  };
+
   const handleReset = () => {
     setSpinners((prev) =>
       prev.map((spinner) => ({ ...spinner, value: 0, edited: false, children: [] }))
     );
   };
 
-  // Calculate the total value of all spinners
   const total = spinners.reduce((sum, spinner) => sum + spinner.value, 0);
 
   return (
     <div className="container-fluid position-relative">
-      {/* 🔼 Reset & Total at the Extreme Top Right */}
       <div className="position-absolute top-0 end-0 p-3 d-flex align-items-center gap-3" style={{ zIndex: 1000 }}>
         <button className="btn btn-primary" onClick={handleReset}>Reset</button>
         <span className="text-lg font-bold">Total: {total}</span>
@@ -102,21 +122,20 @@ const CloudSpinnerGrid: React.FC = () => {
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
           justifyItems: "center",
-          marginTop: "40px", // Push the grid down to avoid overlap
+          marginTop: "40px",
         }}
       >
         {spinners.map((spinner, index) => (
-        <div key={index} className="position-relative spinner-container d-flex flex-column align-items-center">
-            {/* 🔺 Plus & Minus Buttons ABOVE the spinner */}
+          <div key={index} className="position-relative spinner-container d-flex flex-column align-items-center">
             <div className="d-flex justify-content-center mb-2">
               <button
                 className="btn btn-success rounded-circle me-1"
                 style={{ width: "30px", height: "30px" }}
                 onClick={() => handleAddSpinner(index)}
+                disabled={spinner.children.length >= MAX_CHILD_SPINNERS}
               >
                 +
               </button>
-
               <button
                 className="btn btn-danger rounded-circle"
                 style={{ width: "30px", height: "30px" }}
@@ -125,8 +144,6 @@ const CloudSpinnerGrid: React.FC = () => {
                 -
               </button>
             </div>
-
-            {/* 🎡 Parent Spinner */}
             <CloudSpinner
               name={spinner.name}
               value={spinner.value}
@@ -134,16 +151,18 @@ const CloudSpinnerGrid: React.FC = () => {
               edited={spinner.edited}
               total={total}
             />
-
-            {/* 🔽 Child Spinners Appear Below Parent */}
             {spinner.children.map((child, childIndex) => (
               <div key={childIndex} className="mt-2">
+                <input
+                  type="text"
+                  value={child.name}
+                  onChange={(e) => handleNameChange(index, childIndex, e.target.value)}
+                  className="form-control mb-1"
+                />
                 <CloudSpinner
                   name={child.name}
                   value={child.value}
-                  onChange={(newValue) =>
-                    handleChildValueChange(index, childIndex, newValue)
-                  }
+                  onChange={(newValue) => handleChildValueChange(index, childIndex, newValue)}
                   edited={child.edited}
                   total={total}
                 />
