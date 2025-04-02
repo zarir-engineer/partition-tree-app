@@ -58,9 +58,9 @@ const CloudSpinnerGrid = () => {
               <span className="text-lg font-bold">Total: {total}</span>
             </div>
             <div className="container-fluid">
-              <div className="row g-2">
+              <div className="d-flex flex-wrap justify-content-center">
                 {names.map((name, index) => (
-                  <div key={index} className="col-3 col-md-2 col-lg-1 p-1">
+                  <div key={index} className="spinner-container d-flex flex-column align-items-center m-2">
                     <CloudSpinner
                       name={name}
                       value={values[index]}
