@@ -1,109 +1,148 @@
 "use client";
-import { useState } from "react";
-import CloudSpinner from "./CloudSpinner";
+import React, { useState } from "react";
+import CloudSpinner from "./CloudSpinner"; // Ensure this import is correct
 
-const initialNames = [
-  "Sudarshan-ji", "Shripal-ji", "Ishwar-ji", "Vigyanchand-ji",
-  "Parmeshwar-ji", "Pratap-ji", "Jagdish-ji", "Aaji"
-];
+// Define the Spinner type
+interface Spinner {
+  name: string;
+  value: number;
+  edited: boolean;
+  children: Spinner[];
+}
 
-const CloudSpinnerGrid = () => {
-  const [names, setNames] = useState(initialNames);
-  const [values, setValues] = useState<number[]>(Array(names.length).fill(0));
-  const [editedIndexes, setEditedIndexes] = useState<boolean[]>(Array(names.length).fill(false));
-  const [warning, setWarning] = useState(false);
+const CloudSpinnerGrid: React.FC = () => {
+  // Initial spinners setup
+  const [spinners, setSpinners] = useState<Spinner[]>([
+    { name: "Sudarshan-ji", value: 0, edited: false, children: [] },
+    { name: "Shripal-ji", value: 0, edited: false, children: [] },
+    { name: "Ishwar-ji", value: 0, edited: false, children: [] },
+    { name: "Vigyanchand-ji", value: 0, edited: false, children: [] },
+    { name: "Parmeshwar-ji", value: 0, edited: false, children: [] },
+    { name: "Pratap-ji", value: 0, edited: false, children: [] },
+    { name: "Jagdish-ji", value: 0, edited: false, children: [] },
+    { name: "Aaji", value: 0, edited: false, children: [] },
+  ]);
 
+  // Function to update spinner values
   const handleValueChange = (index: number, newValue: number) => {
-    const updatedValues = [...values];
-    updatedValues[index] = newValue;
-    const total = updatedValues.reduce((sum, val) => sum + val, 0);
-
-    if (total > 1) {
-      setWarning(true);
-      setTimeout(() => setWarning(false), 2000);
-      return;
-    }
-
-    const updatedEditedIndexes = [...editedIndexes];
-    updatedEditedIndexes[index] = true;
-
-    setValues(updatedValues);
-    setEditedIndexes(updatedEditedIndexes);
+    setSpinners((prev) =>
+      prev.map((spinner, i) =>
+        i === index ? { ...spinner, value: newValue, edited: true } : spinner
+      )
+    );
   };
 
-  const handleReset = () => {
-    setValues(Array(names.length).fill(0));
-    setEditedIndexes(Array(names.length).fill(false));
-    setWarning(false);
+  // Function to update child spinner values
+  const handleChildValueChange = (
+    parentIndex: number,
+    childIndex: number,
+    newValue: number
+  ) => {
+    setSpinners((prev) =>
+      prev.map((spinner, i) =>
+        i === parentIndex
+          ? {
+              ...spinner,
+              children: spinner.children.map((child, ci) =>
+                ci === childIndex ? { ...child, value: newValue, edited: true } : child
+              ),
+            }
+          : spinner
+      )
+    );
   };
 
-  const handleAddSpinner = (index: number) => {
-    const newNames = [...names];
-    newNames.splice(index + 1, 0, `New-${names.length + 1}`);
-    setNames(newNames);
-    setValues([...values.slice(0, index + 1), 0, ...values.slice(index + 1)]);
-    setEditedIndexes([...editedIndexes.slice(0, index + 1), false, ...editedIndexes.slice(index + 1)]);
+  // Add a new child spinner below the parent
+  const handleAddSpinner = (parentIndex: number) => {
+    setSpinners((prev) =>
+      prev.map((spinner, i) =>
+        i === parentIndex
+          ? {
+              ...spinner,
+              children: [
+                ...spinner.children,
+                { name: `Child ${spinner.children.length + 1}`, value: 0, edited: false, children: [] },
+              ],
+            }
+          : spinner
+      )
+    );
   };
 
-  const handleRemoveSpinner = (index: number) => {
-    if (names.length > 1) {
-      const newNames = names.filter((_, i) => i !== index);
-      const newValues = values.filter((_, i) => i !== index);
-      const newEditedIndexes = editedIndexes.filter((_, i) => i !== index);
-      setNames(newNames);
-      setValues(newValues);
-      setEditedIndexes(newEditedIndexes);
-    }
+  // Remove the last child spinner of a parent
+  const handleRemoveSpinner = (parentIndex: number) => {
+    setSpinners((prev) =>
+      prev.map((spinner, i) =>
+        i === parentIndex
+          ? { ...spinner, children: spinner.children.slice(0, -1) }
+          : spinner
+      )
+    );
   };
 
-  const total = values.reduce((sum, value) => sum + value, 0).toFixed(3);
+  // Calculate the total value of all spinners
+  const total = spinners.reduce((sum, spinner) => sum + spinner.value, 0);
 
   return (
-    <>
-      {warning && (
-        <div className="alert alert-danger position-absolute top-0 start-50 translate-middle-x">
-          Total cannot exceed 1!
-        </div>
-      )}
+    <div className="container-fluid">
+      <div
+        className="d-grid gap-3"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+          justifyItems: "center",
+        }}
+      >
+        {spinners.map((spinner, index) => (
+          <div
+            key={index}
+            className="position-relative spinner-container d-flex flex-column align-items-center"
+          >
+            {/* 🔺 Plus & Minus Buttons ABOVE the spinner */}
+            <div className="d-flex justify-content-center mb-2">
+              <button
+                className="btn btn-success rounded-circle me-1"
+                style={{ width: "30px", height: "30px" }}
+                onClick={() => handleAddSpinner(index)}
+              >
+                +
+              </button>
 
-      <div className="p-4">
-        <div className="d-flex justify-content-end mb-2">
-          <button className="btn btn-primary" onClick={handleReset}>Reset</button>
-        </div>
-        <div className="d-flex justify-content-end mb-4">
-          <span className="text-lg font-bold">Total: {total}</span>
-        </div>
-        <div className="container-fluid">
-          <div className="d-grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", justifyItems: "center" }}>
-            {names.map((name, index) => (
-              <div key={index} className="position-relative spinner-container d-flex flex-column align-items-center">
-                {/* Plus Button */}
-                <button
-                  className="btn btn-success position-absolute top-0 start-0 rounded-circle"
-                  style={{ width: "30px", height: "30px" }}
-                  onClick={() => handleAddSpinner(index)}
-                >+</button>
+              <button
+                className="btn btn-danger rounded-circle"
+                style={{ width: "30px", height: "30px" }}
+                onClick={() => handleRemoveSpinner(index)}
+              >
+                -
+              </button>
+            </div>
 
+            {/* 🎡 Parent Spinner */}
+            <CloudSpinner
+              name={spinner.name}
+              value={spinner.value}
+              onChange={(newValue) => handleValueChange(index, newValue)}
+              edited={spinner.edited}
+              total={total}
+            />
+
+            {/* 🔽 Child Spinners Appear Below Parent */}
+            {spinner.children.map((child, childIndex) => (
+              <div key={childIndex} className="mt-2">
                 <CloudSpinner
-                  name={name}
-                  value={values[index]}
-                  onChange={(newValue) => handleValueChange(index, newValue)}
-                  edited={editedIndexes[index]}
-                  total={parseFloat(total)}
+                  name={child.name}
+                  value={child.value}
+                  onChange={(newValue) =>
+                    handleChildValueChange(index, childIndex, newValue)
+                  }
+                  edited={child.edited}
+                  total={total}
                 />
-
-                {/* Minus Button */}
-                <button
-                  className="btn btn-danger position-absolute top-0 end-0 rounded-circle"
-                  style={{ width: "30px", height: "30px" }}
-                  onClick={() => handleRemoveSpinner(index)}
-                >-</button>
               </div>
             ))}
           </div>
-        </div>
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 
