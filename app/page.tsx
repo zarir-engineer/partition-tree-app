@@ -4,11 +4,13 @@ import CloudSpinnerGrid from '../components/CloudSpinnerGrid'; // Import the Clo
 
 const Page = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1>Hello, World!</h1>
+    <div className="min-h-screen w-full flex flex-col items-center">
+      <h1 className="text-2xl mb-4">Hello, World!</h1>
 
-      {/* Render the CloudSpinnerGrid component */}
-      <CloudSpinnerGrid />
+      {/* Ensure CloudSpinnerGrid takes full width */}
+      <div className="w-full px-5">
+        <CloudSpinnerGrid />
+      </div>
     </div>
   );
 };
