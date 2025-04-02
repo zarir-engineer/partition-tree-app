@@ -9,7 +9,7 @@ interface CloudSpinnerProps {
   edited: boolean;
 }
 
-const CloudSpinner: React.FC<CloudSpinnerProps> = ({ name, value, onChange, edited }) => {
+const CloudSpinner: React.FC<CloudSpinnerProps> = ({ name, value, onChange, edited, total }) => {
   return (
     <div className={`spinner-container p-3 rounded ${edited ? 'bg-secondary' : ''}`}>
       <h5>{name}</h5>
