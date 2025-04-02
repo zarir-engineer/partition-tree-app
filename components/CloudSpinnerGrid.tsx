@@ -8,6 +8,7 @@ const names = [
 ];
 
 const CloudSpinnerGrid = () => {
+  const [values, setValues] = useState<number[]>(Array(names.length).fill(0)); // ✅ Define values state
   const [editedIndexes, setEditedIndexes] = useState<boolean[]>(Array(names.length).fill(false));
   const [warning, setWarning] = useState(false);
 
