@@ -57,10 +57,10 @@ const CloudSpinnerGrid = () => {
         </div>
 
         {/* Grid with 8 columns per row */}
-        <div className="container-fluid px-5">
-          <div className="row g-4"> {/* Ensure spacing between columns */}
+        <div className="container-fluid">
+          <div className="row g-2"> {/* Use small gutters for tighter spacing */}
             {names.map((name, index) => (
-              <div key={index} className="col-6 col-md-3 col-lg-3 col-xl-2">
+              <div key={index} className="col-3 col-md-2 col-lg-1 p-1"> {/* 8 per row */}
                 <CloudSpinner
                   name={name}
                   value={values[index]}
