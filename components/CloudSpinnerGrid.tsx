@@ -93,10 +93,8 @@ const CloudSpinnerGrid: React.FC = () => {
   return (
     <div className="container-fluid position-relative">
       {/* 🔼 Reset & Total at the Extreme Top Right */}
-      <div className="position-absolute top-0 end-0 p-2 d-flex align-items-center gap-3">
-        <button className="btn btn-primary" onClick={handleReset}>
-          Reset
-        </button>
+      <div className="position-absolute top-0 end-0 p-3 d-flex align-items-center gap-3" style={{ zIndex: 1000 }}>
+        <button className="btn btn-primary" onClick={handleReset}>Reset</button>
         <span className="text-lg font-bold">Total: {total}</span>
       </div>
       <div
