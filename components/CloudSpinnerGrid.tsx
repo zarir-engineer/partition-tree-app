@@ -60,19 +60,19 @@ const CloudSpinnerGrid = () => {
           <span className="text-lg font-bold">Total: {total}</span>
         </div>
         <div className="container-fluid">
-          <div className="d-flex flex-wrap justify-content-center">
-            {names.map((name, index) => (
-              <div key={index} className="spinner-container d-flex flex-column align-items-center m-2">
-                <CloudSpinner
-                  name={name}
-                  value={values[index]}
-                  onChange={(newValue) => handleValueChange(index, newValue)}
-                  edited={editedIndexes[index]}
-                  total={parseFloat(total)}
-                />
-              </div>
-            ))}
-          </div>
+            <div className="d-grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", justifyItems: "center" }}>
+              {names.map((name, index) => (
+                <div key={index} className="spinner-container d-flex flex-column align-items-center">
+                  <CloudSpinner
+                    name={name}
+                    value={values[index]}
+                    onChange={(newValue) => handleValueChange(index, newValue)}
+                    edited={editedIndexes[index]}
+                    total={parseFloat(total)}
+                  />
+                </div>
+              ))}
+            </div>
         </div>
       </div>
     </>
