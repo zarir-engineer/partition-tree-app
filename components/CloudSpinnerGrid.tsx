@@ -92,24 +92,23 @@ const CloudSpinnerGrid: React.FC = () => {
 
   return (
     <div className="container-fluid position-relative">
-      {/* Reset Button & Total at the Top Right */}
-      <div className="position-absolute top-0 end-0 p-3 d-flex align-items-center gap-3">
+      {/* 🔼 Reset & Total at the Extreme Top Right */}
+      <div className="position-absolute top-0 end-0 p-2 d-flex align-items-center gap-3">
+        <button className="btn btn-primary" onClick={handleReset}>
+          Reset
+        </button>
         <span className="text-lg font-bold">Total: {total}</span>
-        <button className="btn btn-primary" onClick={handleReset}>Reset</button>
       </div>
-
       <div
         className="d-grid gap-3"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
           justifyItems: "center",
+          marginTop: "40px", // Push the grid down to avoid overlap
         }}
       >
         {spinners.map((spinner, index) => (
-          <div
-            key={index}
-            className="position-relative spinner-container d-flex flex-column align-items-center"
-          >
+        <div key={index} className="position-relative spinner-container d-flex flex-column align-items-center">
             {/* 🔺 Plus & Minus Buttons ABOVE the spinner */}
             <div className="d-flex justify-content-center mb-2">
               <button
