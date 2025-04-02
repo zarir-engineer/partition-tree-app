@@ -74,14 +74,10 @@ const CloudSpinnerGrid: React.FC = () => {
 
         {/* Grid with 8 columns per row */}
         <div className="container-fluid px-5">
-          <div className="row g-4"> {/* Increased spacing with g-4 */}
+          <div className="row g-4"> {/* Ensure spacing between columns */}
             {names.map((name, index) => (
-              <div key={index} className="col-6 col-md-4 col-lg-3 col-xl-1 d-flex justify-content-center">
-                <CloudSpinner
-                  name={name}
-                  value={values[index]}
-                  onChange={(newValue) => handleValueChange(index, newValue)}
-                />
+              <div key={index} className="col-6 col-md-4 col-lg-3 col-xl-2"> {/* 8 per row at xl */}
+                <CloudSpinner name={name} value={values[index]} onChange={(newValue) => handleValueChange(index, newValue)} />
               </div>
             ))}
           </div>
