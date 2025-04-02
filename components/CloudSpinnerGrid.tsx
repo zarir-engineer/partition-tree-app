@@ -8,26 +8,32 @@ const names = [
 ];
 
 const CloudSpinnerGrid = () => {
-  const [values, setValues] = useState(new Array(names.length).fill(0));
-  const [editedSpinners, setEditedSpinners] = useState(new Array(names.length).fill(false));
+  const [editedIndexes, setEditedIndexes] = useState<boolean[]>(Array(names.length).fill(false));
+  const [warning, setWarning] = useState(false);
 
-  const handleValueChange = (index, newValue) => {
-    setValues((prev) => {
-      const updatedValues = [...prev];
-      updatedValues[index] = parseFloat(newValue).toFixed(3); // Limit to 3 decimal places
-      return updatedValues;
-    });
+  const handleValueChange = (index: number, newValue: number) => {
+    const updatedValues = [...values];
+    updatedValues[index] = newValue;
 
-    setEditedSpinners((prev) => {
-      const updated = [...prev];
-      updated[index] = true; // Mark as edited (grey color)
-      return updated;
-    });
+    const total = updatedValues.reduce((sum, val) => sum + val, 0);
+
+    if (total > 1) {
+      setWarning(true);
+      setTimeout(() => setWarning(false), 2000); // Message disappears after 2 sec
+      return; // Prevent updating state
+    }
+
+    const updatedEditedIndexes = [...editedIndexes];
+    updatedEditedIndexes[index] = true;
+
+    setValues(updatedValues);
+    setEditedIndexes(updatedEditedIndexes);
   };
 
   const handleReset = () => {
-    setValues(new Array(names.length).fill(0)); // Reset values
-    setEditedSpinners(new Array(names.length).fill(false)); // Reset color
+    setValues(Array(names.length).fill(0));
+    setEditedIndexes(Array(names.length).fill(false));
+    setWarning(false);
   };
 
   const total = values.reduce((sum, value) => sum + parseFloat(value), 0).toFixed(3);
@@ -51,7 +57,7 @@ const CloudSpinnerGrid = () => {
                 name={name}
                 value={values[index]}
                 onChange={(newValue) => handleValueChange(index, newValue)}
-                edited={editedSpinners[index]} // Pass edited prop
+                edited={editedIndexes[index]}
               />
             </div>
           ))}
