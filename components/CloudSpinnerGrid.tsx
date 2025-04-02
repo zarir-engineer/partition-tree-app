@@ -80,11 +80,24 @@ const CloudSpinnerGrid: React.FC = () => {
     );
   };
 
+  // Reset all spinners
+  const handleReset = () => {
+    setSpinners((prev) =>
+      prev.map((spinner) => ({ ...spinner, value: 0, edited: false, children: [] }))
+    );
+  };
+
   // Calculate the total value of all spinners
   const total = spinners.reduce((sum, spinner) => sum + spinner.value, 0);
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid position-relative">
+      {/* Reset Button & Total at the Top Right */}
+      <div className="position-absolute top-0 end-0 p-3 d-flex align-items-center gap-3">
+        <span className="text-lg font-bold">Total: {total}</span>
+        <button className="btn btn-primary" onClick={handleReset}>Reset</button>
+      </div>
+
       <div
         className="d-grid gap-3"
         style={{
