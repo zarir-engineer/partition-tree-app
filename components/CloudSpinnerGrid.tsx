@@ -37,7 +37,7 @@ const CloudSpinnerGrid = () => {
     setWarning(false);
   };
 
-  const total = values.reduce((sum, value) => sum + parseFloat(value), 0).toFixed(3);
+  const total = values.reduce((sum, value) => sum + value, 0).toFixed(3);
 
   return (
     <>
