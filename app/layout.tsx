@@ -6,12 +6,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <div className="container">
-          <div className="row">
-            <div className="col-12">
-              {children}
-            </div>
-          </div>
+        <div className="container-fluid">
+            <div>{children}</div>
         </div>
       </body>
     </html>
