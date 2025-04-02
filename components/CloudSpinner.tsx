@@ -4,6 +4,7 @@ import { useState } from "react";
 interface CloudSpinnerProps {
   name: string;
   value: number;
+  total: number; // Add total as a prop
   onChange: (newValue: number) => void;
   edited: boolean;
 }
@@ -18,7 +19,7 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({ name, value, onChange, edit
         value={value}
         onChange={(e) => {
           const newValue = parseFloat(e.target.value);
-          if (newValue + total - value <= 1) { // Ensures total doesn't exceed 1
+          if (!isNaN(newValue) && newValue + total - value <= 1) {
             onChange(newValue);
           }
         }}
