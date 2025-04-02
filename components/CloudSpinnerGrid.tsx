@@ -64,8 +64,8 @@ const CloudSpinnerGrid = () => {
                   name={name}
                   value={values[index]}
                   onChange={(newValue) => handleValueChange(index, newValue)}
-                  edited={editedIndexes[index]
-                  total=parsefloat(total)}
+                  edited={editedIndexes[index]}
+                  total={parseFloat(total)}
                 />
               </div>
             ))}
