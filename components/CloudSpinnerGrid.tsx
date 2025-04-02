@@ -39,42 +39,44 @@ const CloudSpinnerGrid = () => {
 
   const total = values.reduce((sum, value) => sum + value, 0).toFixed(3);
 
-      return (
-        <>
-          {warning && (
-            <div className="alert alert-danger position-absolute top-0 start-50 translate-middle-x">
-              Total cannot exceed 1!
-            </div>
-          )}
+  return (
+    <>
+      {warning && (
+        <div className="alert alert-danger position-absolute top-0 start-50 translate-middle-x">
+          Total cannot exceed 1!
+        </div>
+      )}
 
-          <div className="p-4">
-            <div className="flex justify-between items-center mb-4">
-              <button
-                className="px-4 py-2 bg-gray-300 rounded-lg"
-                onClick={handleReset}
-              >
-                Reset
-              </button>
-              <span className="text-lg font-bold">Total: {total}</span>
-            </div>
-            <div className="container-fluid">
-              <div className="d-flex flex-wrap justify-content-center">
-                {names.map((name, index) => (
-                  <div key={index} className="spinner-container d-flex flex-column align-items-center m-2">
-                    <CloudSpinner
-                      name={name}
-                      value={values[index]}
-                      onChange={(newValue) => handleValueChange(index, newValue)}
-                      edited={editedIndexes[index]}
-                      total={parseFloat(total)}
-                    />
-                  </div>
-                ))}
+      <div className="p-4">
+        <div className="d-flex justify-content-end mb-2">
+          <button
+            className="btn btn-primary"
+            onClick={handleReset}
+          >
+            Reset
+          </button>
+        </div>
+        <div className="d-flex justify-content-end mb-4">
+          <span className="text-lg font-bold">Total: {total}</span>
+        </div>
+        <div className="container-fluid">
+          <div className="d-flex flex-wrap justify-content-center">
+            {names.map((name, index) => (
+              <div key={index} className="spinner-container d-flex flex-column align-items-center m-2">
+                <CloudSpinner
+                  name={name}
+                  value={values[index]}
+                  onChange={(newValue) => handleValueChange(index, newValue)}
+                  edited={editedIndexes[index]}
+                  total={parseFloat(total)}
+                />
               </div>
-            </div>
+            ))}
           </div>
-        </>
-      );
+        </div>
+      </div>
+    </>
+  );
 };
 
 export default CloudSpinnerGrid;
