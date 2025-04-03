@@ -8,6 +8,7 @@ interface CloudSpinnerProps {
   onChange: (newValue: number) => void;
   onNameChange: (newName: string) => void;
   edited: boolean;
+  isTopLevel?: boolean;  // New prop to check if it's a top-level spinner
 }
 
 const CloudSpinner: React.FC<CloudSpinnerProps> = ({
@@ -16,26 +17,29 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
   onChange,
   onNameChange,
   edited,
-  total
+  total,
+  isTopLevel,  // Accept the new prop
 }) => {
   return (
-    <div className={`spinner-container p-3 rounded ${edited ? 'bg-secondary' : ''}`}>
-      {/* Plus and Minus Buttons */}
-      <div className="d-flex justify-content-center gap-2 mb-2">
-        <button
-          className="btn btn-outline-primary btn-sm"
-          onClick={() => onChange(value + 1)}
-        >
-          +
-        </button>
-        <button
-          className="btn btn-outline-danger btn-sm"
-          onClick={() => onChange(value - 1)}
-          disabled={value <= 0} // Prevents negative values
-        >
-          -
-        </button>
-      </div>
+    <div className={`spinner-container p-3 rounded ${edited ? "bg-secondary" : ""}`}>
+      {/* Conditionally Show Plus/Minus Buttons */}
+      {!isTopLevel && (
+        <div className="d-flex justify-content-center gap-2 mb-2">
+          <button
+            className="btn btn-outline-primary btn-sm"
+            onClick={() => onChange(value + 1)}
+          >
+            +
+          </button>
+          <button
+            className="btn btn-outline-danger btn-sm"
+            onClick={() => onChange(value - 1)}
+            disabled={value <= 0} // Prevents negative values
+          >
+            -
+          </button>
+        </div>
+      )}
 
       {/* Editable Name */}
       <h5
@@ -65,4 +69,4 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
   );
 };
 
-export default CloudSpinner;
+export default CloudSpinner
