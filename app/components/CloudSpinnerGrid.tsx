@@ -256,7 +256,7 @@ const CloudSpinnerGrid: React.FC = () => {
           <span className="legend">Legend: [1/8 means 0.125]</span>
         </div>
 
-        {/* Top Bar: Total + Reset Button */}
+        {/* Top Bar: Total + Reset + Save to PDF */}
         <div className="d-flex justify-content-end align-items-center gap-3 mb-3 w-100 px-4">
           <span className="fw-bold">Total: {total}</span>
           <button className="btn btn-warning" onClick={handleReset}>
@@ -267,34 +267,28 @@ const CloudSpinnerGrid: React.FC = () => {
           </button>
         </div>
 
-        {/* ✅ Fixed Top-Level Spinners */}
-        <div className="top-level-container d-flex justify-content-between">
-          {spinners
-            .filter((sp) => sp.isTopLevel)
-            .map((topLevel) => (
+        {/* ✅ Improved Top-Level Spinners Layout */}
+        <div className="d-flex flex-wrap justify-content-between gap-2 overflow-x-auto">
+          {spinners.filter(sp => sp.isTopLevel).map(topLevel => (
+            <div key={topLevel.id} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
+              {/* Render Top-Level Spinner */}
               <CloudSpinner
-                key={topLevel.id}
                 name={topLevel.name}
                 value={topLevel.value}
                 total={total}
                 onChange={(newValue) => handleValueChange(topLevel.id, newValue)}
                 onNameChange={(newName) => handleNameChange(topLevel.id, newName)}
                 edited={topLevel.edited}
-                isTopLevel={true} // Explicitly set
+                isTopLevel={true}
               />
-            ))}
-        </div>
-      </div>
 
-      {/* ✅ Scrollable Children Section */}
-      <div className="scrollable-container">
-        {spinners
-          .filter((sp) => sp.isTopLevel)
-          .map((topLevel) => (
-            <div key={topLevel.id} className="p-2">
-              {renderSpinners(topLevel.children)}
+              {/* ✅ Render Children Directly Under Parent */}
+              <div className="d-flex flex-column align-items-center mt-2">
+                {topLevel.children.length > 0 && renderSpinners(topLevel.children)}
+              </div>
             </div>
           ))}
+        </div>
       </div>
     </div>
   );
