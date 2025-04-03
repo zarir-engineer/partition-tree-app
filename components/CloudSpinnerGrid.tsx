@@ -239,6 +239,11 @@ const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
       const updateTree = (spinners: Spinner[]): Spinner[] => {
         return spinners.map((spinner) => {
           if (spinner.id === parentId) {
+            if (spinner.children.length >= 4) {
+              alert("Maximum of 4 children allowed.");
+              return spinner;
+            }
+
             const numChildren = spinner.children.length + 1;
             const newChild: Spinner = {
               id: Date.now(), // Assign a unique ID
@@ -248,19 +253,16 @@ const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
               children: [],
             };
 
-            return {
-              ...spinner,
-              children: [...spinner.children, newChild].map((child) => ({
-                ...child,
-                value: spinner.value / numChildren, // Redistribute value
-              })),
-            };
-          } else {
-            return {
-              ...spinner,
-              children: updateTree(spinner.children), // Recurse into children
-            };
+            // Distribute the parent's value equally among all children
+            const updatedChildren = [...spinner.children, newChild].map((child) => ({
+              ...child,
+              value: spinner.value / numChildren,
+            }));
+
+            return { ...spinner, children: updatedChildren };
           }
+
+          return { ...spinner, children: updateTree(spinner.children) }; // Recurse into children
         });
       };
 
@@ -268,27 +270,29 @@ const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
     });
   };
 
-    // Distribute the parent's value equally among all children
-    const updatedChildren = [...parent.children, newChild].map(child => ({
-      ...child,
-      value: parent.value / numChildren
-    }));
-
-    // Update parent with new children
-    const updateTree = (spinners: Spinner[]): Spinner[] =>
-      spinners.map(spinner => {
-        if (spinner === parent) {
-          return { ...spinner, children: updatedChildren };
-        }
-        return { ...spinner, children: updateTree(spinner.children) };
-      });
-
-    setSpinners(updateTree(spinners)); // Trigger re-render
-  };
-
   const handleNameChange = (spinner: Spinner, newName: string) => {
     spinner.name = newName;
     setSpinners([...spinners]);
+  };
+
+  const handleIncrement = (spinnerId: number) => {
+    setSpinners((prevSpinners) =>
+      prevSpinners.map((spinner) =>
+        spinner.id === spinnerId
+          ? { ...spinner, value: spinner.value + 1 }
+          : spinner
+      )
+    );
+  };
+
+  const handleDecrement = (spinnerId: number) => {
+    setSpinners((prevSpinners) =>
+      prevSpinners.map((spinner) =>
+        spinner.id === spinnerId
+          ? { ...spinner, value: Math.max(0, spinner.value - 1) } // Prevent negative values
+          : spinner
+      )
+    );
   };
 
   const renderTree = (nodes: Spinner[]) => {
