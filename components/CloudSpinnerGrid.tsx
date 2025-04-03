@@ -208,7 +208,36 @@ const CloudSpinnerGrid: React.FC = () => {
     ));
   };
 
-  return <div className="container-fluid">{renderTree(spinners)}</div>;
+  const calculateTotal = () => {
+      return spinners.reduce((sum, spinner) => sum + spinner.value, 0);
+  };
+
+  const handleReset = () => {
+    // Reset all spinners to their initial values
+    setSpinners(initialTreeData.map(resetSpinner));
+  };
+
+  const resetSpinner = (spinner: Spinner): Spinner => {
+    return {
+      ...spinner,
+      value: 0,
+      edited: false,
+      children: spinner.children.map(resetSpinner),
+    };
+  };
+
+  return (
+  <div className="container-fluid">
+    <div className="d-flex justify-content-between align-items-center mb-3">
+      <span className="fw-bold">Vile Parle, Mumbai</span>
+      <div className="d-flex align-items-center gap-3">
+        <span className="fw-bold">Total: {calculateTotal()}</span>
+        <button className="btn btn-warning" onClick={handleReset}>Reset</button>
+      </div>
+    </div>
+    {renderTree(spinners)}
+  </div>
+  );
 };
 
 export default CloudSpinnerGrid;
