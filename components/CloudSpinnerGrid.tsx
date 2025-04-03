@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CloudSpinner from "./CloudSpinner";
 
 // Define the Spinner type
@@ -12,9 +12,6 @@ interface Spinner {
   isTopLevel?: boolean; // ✅ Add this line
 }
 
-interface CloudSpinnerGridProps {
-  setTotal: (total: number) => void;
-}
 
 const MAX_CHILD_SPINNERS = 4;
 
@@ -134,19 +131,24 @@ const initialTreeData: Spinner[] = [
       },
 ];
 
-const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
+const CloudSpinnerGrid: React.FC = () => {
   const [spinners, setSpinners] = useState<Spinner[]>(initialTreeData);
-  const [total, updateTotal] = useState(1);
+  const [total, setTotal] = useState(1); // Move state here
+
 
   const handleUpdateTotal = () => {
     const newTotal = total + 1; // Example logic to update total
-    updateTotal(newTotal);
     setTotal(newTotal); // Update total in parent component
   };
 
   const calculateTotal = () => {
     return spinners.reduce((sum, spinner) => sum + spinner.value, 0);
   };
+
+  // Update total whenever spinners change
+  useEffect(() => {
+    setTotal(calculateTotal());
+  }, [spinners]);
 
   const handleReset = () => {
     setSpinners(
@@ -231,6 +233,7 @@ const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
     }
 
     setSpinners([...spinners]); // Trigger re-render
+    setTotal(calculateTotal());  // ✅ Update total dynamically after all calculations
   };
 
   const handleAddChild = (parentId: number) => {
@@ -316,12 +319,18 @@ const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
 
   return (
     <div className="container-fluid">
+      {/* ✅ Location & Legend at the top */}
+      <div className="legend-container">
+        <span>Vile Parle, Mumbai</span>
+        <span className="legend">Legend: [1/8 means 0.125]</span>
+      </div>
+
       {/* Top Bar: Total + Reset Button */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <div className="d-flex align-items-center gap-3">
-          <span className="fw-bold">Total: {calculateTotal()}</span>
-          <button className="btn btn-warning" onClick={handleReset}>Reset</button>
-        </div>
+      <div className="d-flex justify-content-end align-items-center gap-3 mb-3 w-100 px-4">
+        <span className="fw-bold">Total: {total}</span>
+        <button className="btn btn-warning" onClick={handleReset}>
+          Reset
+        </button>
       </div>
 
       {/* Spinners Grid */}
