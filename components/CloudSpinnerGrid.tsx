@@ -1,8 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import CloudSpinner from "./CloudSpinner"; // Ensure this import is correct
+import CloudSpinner from "./CloudSpinner";
 
-// Define the Spinner type
 interface Spinner {
   name: string;
   value: number;
@@ -12,167 +11,204 @@ interface Spinner {
 
 const MAX_CHILD_SPINNERS = 4;
 
+const initialTreeData: Spinner[] = [
+      { name: "Sudarshan-ji", value: 0, edited: false, children: [
+              { name: "Avinash", value: 0, edited: false, children: [] },
+              { name: "Nanda", value: 0, edited: false, children: [] },
+              { name: "Bharti", value: 0, edited: false, children: [] },
+              { name: "Manju", value: 0, edited: false, children: [] },
+              ] },
+      { name: "Shripal-ji", value: 0, edited: false, children: [
+              { name: "Kiran", value: 0, edited: false, children: [] },
+              { name: "Charu", value: 0, edited: false, children: [] },
+              { name: "Ajay", value: 0, edited: false, children: [] },
+              ] },
+      { name: "Ishwar-ji", value: 0, edited: false, children: [
+              { name: "Dinesh", value: 0, edited: false, children: [] },
+              { name: "Kishore", value: 0, edited: false, children: [] },
+              { name: "Vijay", value: 0, edited: false, children: [] },
+              ] },
+      { name: "Vigyanchand-ji", value: 0, edited: false, children: [
+              { name: "Vikas", value: 0, edited: false, children: [] },
+              { name: "Pragati", value: 0, edited: false, children: [] },
+              { name: "Subhash", value: 0, edited: false, children: [] },
+              { name: "Chandrashekhar", value: 0, edited: false, children: [] },
+              ] },
+      { name: "Parmeshwar-ji", value: 0, edited: false, children: [
+              { name: "Pradeep", value: 0, edited: false, children: [] },
+              { name: "Sanjay", value: 0, edited: false, children: [] },
+              { name: "Abhijeet", value: 0, edited: false, children: [] },
+              { name: "Ravi", value: 0, edited: false, children: [] },
+              { name: "Mamta", value: 0, edited: false, children: [] },
+              { name: "Kiran", value: 0, edited: false, children: [] },
+              { name: "child7", value: 0, edited: false, children: [] },
+              { name: "child8", value: 0, edited: false, children: [] },
+              { name: "child9", value: 0, edited: false, children: [] },] },
+      { name: "Pratapchand-ji", value: 0, edited: false, children: [
+              { name: "Shailendra", value: 0, edited: false, children: [] },
+              { name: "Smita", value: 0, edited: false, children: [] },
+              { name: "Kavita", value: 0, edited: false, children: [] },
+              { name: "Nishith", value: 0, edited: false, children: [] },
+              ] },
+      { name: "Jagdish-ji", value: 0, edited: false, children: [
+              { name: "Soumit", value: 0, edited: false, children: [] },
+              { name: "Satyen", value: 0, edited: false, children: [] },
+              ] },
+      {
+        name: "Aa-ji",
+        value: 0,
+        edited: false,
+        children: [
+          { name: "Sudarshan-ji", value: 0, edited: false, children: [
+                  { name: "Avinash", value: 0, edited: false, children: [] },
+                  { name: "Nanda", value: 0, edited: false, children: [] },
+                  { name: "Bharti", value: 0, edited: false, children: [] },
+                  { name: "Manju", value: 0, edited: false, children: [] },
+                  ] },
+          { name: "Shripal-ji", value: 0, edited: false, children: [
+                  { name: "Kiran", value: 0, edited: false, children: [] },
+                  { name: "Charu", value: 0, edited: false, children: [] },
+                  { name: "Ajay", value: 0, edited: false, children: [] },
+                  ] },
+          { name: "Ishwar-ji", value: 0, edited: false, children: [
+                  { name: "Dinesh", value: 0, edited: false, children: [] },
+                  { name: "Kishore", value: 0, edited: false, children: [] },
+                  { name: "Vijay", value: 0, edited: false, children: [] },
+                  ] },
+          { name: "Vigyanchand-ji", value: 0, edited: false, children: [
+                  { name: "Vikas", value: 0, edited: false, children: [] },
+                  { name: "Pragati", value: 0, edited: false, children: [] },
+                  { name: "Subhash", value: 0, edited: false, children: [] },
+                  { name: "Chandrashekhar", value: 0, edited: false, children: [] },
+                  ] },
+          { name: "Parmeshwar-ji", value: 0, edited: false, children: [
+                  { name: "Pradeep", value: 0, edited: false, children: [] },
+                  { name: "Sanjay", value: 0, edited: false, children: [] },
+                  { name: "Abhijeet", value: 0, edited: false, children: [] },
+                  { name: "Ravi", value: 0, edited: false, children: [] },
+                  { name: "Mamta", value: 0, edited: false, children: [] },
+                  { name: "Kiran", value: 0, edited: false, children: [] },
+                  { name: "child7", value: 0, edited: false, children: [] },
+                  { name: "child8", value: 0, edited: false, children: [] },
+                  { name: "child9", value: 0, edited: false, children: [] },] },
+          { name: "Pratapchand-ji", value: 0, edited: false, children: [
+                  { name: "Shailendra", value: 0, edited: false, children: [] },
+                  { name: "Smita", value: 0, edited: false, children: [] },
+                  { name: "Kavita", value: 0, edited: false, children: [] },
+                  { name: "Nishith", value: 0, edited: false, children: [] },
+                  ] },
+          { name: "Jagdish-ji", value: 0, edited: false, children: [
+                  { name: "Soumit", value: 0, edited: false, children: [] },
+                  { name: "Satyen", value: 0, edited: false, children: [] },
+                  ] },
+          { name: "Laxmibai-ji", value: 0, edited: false, children: [
+                  { name: "Arun", value: 0, edited: false, children: [] },
+                  { name: "Gautam", value: 0, edited: false, children: [] },
+                  { name: "Munni", value: 0, edited: false, children: [] },
+                  { name: "Neelima", value: 0, edited: false, children: [] },
+         ],
+       },
+     ],
+   },
+];
+
 const CloudSpinnerGrid: React.FC = () => {
-  const [spinners, setSpinners] = useState<Spinner[]>([
-    { name: "Sudarshan-ji", value: 0, edited: false, children: [] },
-    { name: "Shripal-ji", value: 0, edited: false, children: [] },
-    { name: "Ishwar-ji", value: 0, edited: false, children: [] },
-    { name: "Vigyanchand-ji", value: 0, edited: false, children: [] },
-    { name: "Parmeshwar-ji", value: 0, edited: false, children: [] },
-    { name: "Pratap-ji", value: 0, edited: false, children: [] },
-    { name: "Jagdish-ji", value: 0, edited: false, children: [] },
-    { name: "Aaji", value: 0, edited: false, children: [] },
-  ]);
+  const [spinners, setSpinners] = useState<Spinner[]>(initialTreeData);
 
-  const updateParentValue = (parentIndex: number) => {
+  const updateParentValue = (parent: Spinner) => {
+    const updatedParent = { ...parent, value: parent.children.reduce((sum, child) => sum + child.value, 0) };
+    return updatedParent;
+  };
+
+  const updateTree = (tree: Spinner[], target: Spinner, updateFn: (spinner: Spinner) => Spinner): Spinner[] => {
+    return tree.map((node) => {
+      if (node === target) {
+        return updateFn(node);
+      }
+      return { ...node, children: updateTree(node.children, target, updateFn) };
+    });
+  };
+
+  const handleValueChange = (spinner: Spinner, newValue: number) => {
     setSpinners((prev) =>
-      prev.map((spinner, i) =>
-        i === parentIndex
-          ? {
-              ...spinner,
-              value: spinner.children.reduce((sum, child) => sum + child.value, 0),
-            }
-          : spinner
-      )
+      updateTree(prev, spinner, (node) => ({
+        ...node,
+        value: newValue,
+        edited: true,
+      }))
     );
   };
 
-  const handleValueChange = (index: number, newValue: number) => {
+  const handleAddChild = (parent: Spinner) => {
+    if (parent.children.length < MAX_CHILD_SPINNERS) {
+      setSpinners((prev) =>
+        updateTree(prev, parent, (node) => ({
+          ...node,
+          children: [...node.children, { name: `Child ${node.children.length + 1}`, value: 0, edited: false, children: [] }],
+        }))
+      );
+    }
+  };
+
+  const handleRemoveChild = (parent: Spinner) => {
+    if (parent.children.length > 0) {
+      setSpinners((prev) =>
+        updateTree(prev, parent, (node) => ({
+          ...node,
+          children: node.children.slice(0, -1),
+        }))
+      );
+    }
+  };
+
+  const handleNameChange = (spinner: Spinner, newName: string) => {
     setSpinners((prev) =>
-      prev.map((spinner, i) =>
-        i === index ? { ...spinner, value: newValue, edited: true } : spinner
-      )
+      updateTree(prev, spinner, (node) => ({
+        ...node,
+        name: newName,
+      }))
     );
   };
 
-  const handleChildValueChange = (parentIndex: number, childIndex: number, newValue: number) => {
-    setSpinners((prev) =>
-      prev.map((spinner, i) =>
-        i === parentIndex
-          ? {
-              ...spinner,
-              children: spinner.children.map((child, ci) =>
-                ci === childIndex ? { ...child, value: newValue, edited: true } : child
-              ),
-            }
-          : spinner
-      )
-    );
-    updateParentValue(parentIndex);
-  };
-
-  const handleAddSpinner = (parentIndex: number) => {
-    setSpinners((prev) =>
-      prev.map((spinner, i) =>
-        i === parentIndex && spinner.children.length < MAX_CHILD_SPINNERS
-          ? {
-              ...spinner,
-              children: [
-                ...spinner.children,
-                { name: `Child ${spinner.children.length + 1}`, value: 0, edited: false, children: [] },
-              ],
-            }
-          : spinner
-      )
-    );
-  };
-
-  const handleRemoveSpinner = (parentIndex: number) => {
-    setSpinners((prev) =>
-      prev.map((spinner, i) =>
-        i === parentIndex
-          ? { ...spinner, children: spinner.children.slice(0, -1) }
-          : spinner
-      )
-    );
-    updateParentValue(parentIndex);
-  };
-
-  const handleNameChange = (parentIndex: number, childIndex: number, newName: string) => {
-    setSpinners((prev) =>
-      prev.map((spinner, i) =>
-        i === parentIndex
-          ? {
-              ...spinner,
-              children: spinner.children.map((child, ci) =>
-                ci === childIndex ? { ...child, name: newName } : child
-              ),
-            }
-          : spinner
-      )
-    );
-  };
-
-  const handleReset = () => {
-    setSpinners((prev) =>
-      prev.map((spinner) => ({ ...spinner, value: 0, edited: false, children: [] }))
-    );
-  };
-
-  const total = spinners.reduce((sum, spinner) => sum + spinner.value, 0);
-
-  return (
-    <div className="container-fluid position-relative">
-      <div className="position-absolute top-0 end-0 p-3 d-flex align-items-center gap-3" style={{ zIndex: 1000 }}>
-        <button className="btn btn-primary" onClick={handleReset}>Reset</button>
-        <span className="text-lg font-bold">Total: {total}</span>
+  const renderTree = (nodes: Spinner[]) => {
+    return nodes.map((node, index) => (
+      <div key={index} className="mt-2">
+        <div className="d-flex align-items-center gap-2">
+          <button
+            className="btn btn-success rounded-circle"
+            style={{ width: "30px", height: "30px" }}
+            onClick={() => handleAddChild(node)}
+            disabled={node.children.length >= MAX_CHILD_SPINNERS}
+          >
+            +
+          </button>
+          <button
+            className="btn btn-danger rounded-circle"
+            style={{ width: "30px", height: "30px" }}
+            onClick={() => handleRemoveChild(node)}
+          >
+            -
+          </button>
+          <input
+            type="text"
+            value={node.name}
+            onChange={(e) => handleNameChange(node, e.target.value)}
+            className="form-control"
+          />
+        </div>
+        <CloudSpinner
+          name={node.name}
+          value={node.value}
+          onChange={(newValue) => handleValueChange(node, newValue)}
+          edited={node.edited}
+          total={node.value}
+        />
+        <div className="ms-4">{renderTree(node.children)}</div>
       </div>
-      <div
-        className="d-grid gap-3"
-        style={{
-          gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
-          justifyItems: "center",
-          marginTop: "40px",
-        }}
-      >
-        {spinners.map((spinner, index) => (
-          <div key={index} className="position-relative spinner-container d-flex flex-column align-items-center">
-            <div className="d-flex justify-content-center mb-2">
-              <button
-                className="btn btn-success rounded-circle me-1"
-                style={{ width: "30px", height: "30px" }}
-                onClick={() => handleAddSpinner(index)}
-                disabled={spinner.children.length >= MAX_CHILD_SPINNERS}
-              >
-                +
-              </button>
-              <button
-                className="btn btn-danger rounded-circle"
-                style={{ width: "30px", height: "30px" }}
-                onClick={() => handleRemoveSpinner(index)}
-              >
-                -
-              </button>
-            </div>
-            <CloudSpinner
-              name={spinner.name}
-              value={spinner.value}
-              onChange={(newValue) => handleValueChange(index, newValue)}
-              edited={spinner.edited}
-              total={total}
-            />
-            {spinner.children.map((child, childIndex) => (
-              <div key={childIndex} className="mt-2">
-                <input
-                  type="text"
-                  value={child.name}
-                  onChange={(e) => handleNameChange(index, childIndex, e.target.value)}
-                  className="form-control mb-1"
-                />
-                <CloudSpinner
-                  name={child.name}
-                  value={child.value}
-                  onChange={(newValue) => handleChildValueChange(index, childIndex, newValue)}
-                  edited={child.edited}
-                  total={total}
-                />
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+    ));
+  };
+
+  return <div className="container-fluid">{renderTree(spinners)}</div>;
 };
 
 export default CloudSpinnerGrid;
