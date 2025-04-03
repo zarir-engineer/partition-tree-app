@@ -154,21 +154,72 @@ const CloudSpinnerGrid: React.FC = () => {
     return null;
   };
 
+  const handleValueChange = (node: Spinner, newValue: number) => {
+    const currentTotal = calculateTotal();
+    const difference = newValue - node.value; // How much the value is changing
 
+    // If new total exceeds 1, adjust other values or throw warning
+    if (currentTotal + difference > 1) {
+      alert("Total cannot exceed 1. Adjusting other values...");
+      const excess = (currentTotal + difference) - 1;
 
-const handleValueChange = (node: Spinner, newValue: number) => {
-  const diff = newValue - node.value; // Find the difference
-  node.value = newValue;
+      // Try to distribute excess among other spinners
+      let remainingSpinners = spinners.filter(sp => sp !== node && sp.value > 0);
 
-  // Update all ancestors
-  let parent = findParent(spinners, node);
-  while (parent) {
-    parent.value += diff;
-    parent = findParent(spinners, parent);
-  }
-  setTotal(prevTotal => prevTotal + diff); // Update total
-  setSpinners([...spinners]); // Trigger re-render
-};
+      if (remainingSpinners.length > 0) {
+        let distributeAmount = excess / remainingSpinners.length;
+
+        remainingSpinners.forEach(sp => {
+          sp.value = Math.max(0, sp.value - distributeAmount); // Reduce each spinner’s value
+        });
+      } else {
+        alert("No values available to adjust. Cannot increase further.");
+        return;
+      }
+    }
+
+    // Update the child's value
+    node.value = newValue;
+
+    // Update parent values recursively
+    let parent = findParent(spinners, node);
+    while (parent) {
+      parent.value = parent.children.reduce((sum, child) => sum + child.value, 0);
+      parent = findParent(spinners, parent);
+    }
+
+    setSpinners([...spinners]); // Trigger re-render
+  };
+
+  const handleAddChild = (parent: Spinner) => {
+    const newChildName = `Child ${parent.children.length + 1}`;
+    const numChildren = parent.children.length + 1; // New total count including the new child
+
+    // New child starts with equal share of the parent's value
+    const newChild: Spinner = {
+      name: newChildName,
+      value: parent.value / numChildren,
+      edited: false,
+      children: []
+    };
+
+    // Distribute the parent's value equally among all children
+    const updatedChildren = [...parent.children, newChild].map(child => ({
+      ...child,
+      value: parent.value / numChildren
+    }));
+
+    // Update parent with new children
+    const updateTree = (spinners: Spinner[]): Spinner[] =>
+      spinners.map(spinner => {
+        if (spinner === parent) {
+          return { ...spinner, children: updatedChildren };
+        }
+        return { ...spinner, children: updateTree(spinner.children) };
+      });
+
+    setSpinners(updateTree(spinners)); // Trigger re-render
+  };
 
   const handleNameChange = (spinner: Spinner, newName: string) => {
     spinner.name = newName;
@@ -181,6 +232,7 @@ const handleValueChange = (node: Spinner, newValue: number) => {
         <CloudSpinner
           name={node.name}
           value={node.value}
+          isTopLevel={node.isTopLevel}
           onChange={(newValue) => handleValueChange(node, newValue)}
           onNameChange={(newName) => handleNameChange(node, newName)}
           edited={node.edited}

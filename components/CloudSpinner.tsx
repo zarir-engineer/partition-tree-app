@@ -65,7 +65,7 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
         onChange={(e) => {
           const newValue = parseFloat(e.target.value);
           if (!isNaN(newValue) && newValue + total - value <= 1) {
-            onChange(newValue);
+      	    onChange(newValue);
           }
         }}
         className="form-control"
