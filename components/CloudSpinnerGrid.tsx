@@ -164,7 +164,6 @@ const handleValueChange = (node: Spinner, newValue: number) => {
     parent.value += diff;
     parent = findParent(spinners, parent);
   }
-
   setTotal(prevTotal => prevTotal + diff); // Update total
   setSpinners([...spinners]); // Trigger re-render
 };
@@ -199,7 +198,7 @@ const handleValueChange = (node: Spinner, newValue: number) => {
           <button className="btn btn-warning" onClick={handleReset}>Reset</button>
         </div>
       </div>
-      <div className="flex flex-wrap justify-between gap-1 overflow-x-auto">
+      <div className="d-flex flex-wrap justify-content-between gap-2 overflow-x-auto">
         {spinners.map((spinner, index) => (
           <div key={index} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
             {renderTree([spinner])}
