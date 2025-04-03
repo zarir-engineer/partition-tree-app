@@ -142,7 +142,34 @@ const CloudSpinnerGrid: React.FC = () => {
   };
 
   const handleReset = () => {
-    setSpinners(initialTreeData.map(spinner => ({ ...spinner, value: 0, edited: false })));
+    setSpinners(
+      initialTreeData.map(spinner => {
+        const numChildren = spinner.children.length;
+        const childValue = numChildren > 0 ? 0.125 / numChildren : 0;
+
+        return {
+          ...spinner,
+          value: 0.125, // Reset top-level to 0.125
+          edited: false,
+          children: spinner.children.map(child => {
+            const numGrandChildren = child.children.length;
+            const grandChildValue = numGrandChildren > 0 ? childValue / numGrandChildren : 0;
+
+            return {
+              ...child,
+              value: childValue, // Distribute value among children
+              edited: false,
+              children: child.children.map(grandChild => ({
+                ...grandChild,
+                value: grandChildValue, // Distribute value among grandchildren
+                edited: false
+              }))
+            };
+          })
+        };
+      })
+    );
+    setTotal(1); // Ensure total remains 1
   };
 
   const findParent = (nodes: Spinner[], child: Spinner): Spinner | null => {
