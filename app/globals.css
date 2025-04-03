@@ -8,6 +8,14 @@ button {
 }
 
 
+.legend-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem; /* Adjust spacing between elements */
+    width: 100%;
+}
+
 .legend {
     position: absolute;
     top: 10px;

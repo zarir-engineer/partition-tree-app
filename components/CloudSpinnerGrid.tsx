@@ -4,6 +4,7 @@ import CloudSpinner from "./CloudSpinner";
 
 // Define the Spinner type
 interface Spinner {
+  id: number;
   name: string;
   value: number;
   edited: boolean;
@@ -11,131 +12,137 @@ interface Spinner {
   isTopLevel?: boolean; // ✅ Add this line
 }
 
+interface CloudSpinnerGridProps {
+  setTotal: (total: number) => void;
+}
+
 const MAX_CHILD_SPINNERS = 4;
 
 const initialTreeData: Spinner[] = [
-      { name: "Sudarshan-ji", value: 0.125, edited: false, isTopLevel: true,
+      { id: 1, name: "Sudarshan-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
-              { name: "Avinash", value: 0, edited: false, children: [] },
-              { name: "Nanda", value: 0, edited: false, children: [] },
-              { name: "Bharti", value: 0, edited: false, children: [] },
-              { name: "Manju", value: 0, edited: false, children: [] },
+              { id: 101, name: "Avinash", value: 0, edited: false, children: [] },
+              { id: 102, name: "Nanda", value: 0, edited: false, children: [] },
+              { id: 103, name: "Bharti", value: 0, edited: false, children: [] },
+              { id: 104, name: "Manju", value: 0, edited: false, children: [] },
               ] },
-      { name: "Shripal-ji", value: 0.125, edited: false, isTopLevel: true,
+      { id: 2, name: "Shripal-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
-              { name: "Kiran", value: 0, edited: false, children: [] },
-              { name: "Charu", value: 0, edited: false, children: [] },
-              { name: "Ajay", value: 0, edited: false, children: [] },
+              { id: 201, name: "Kiran", value: 0, edited: false, children: [] },
+              { id: 202, name: "Charu", value: 0, edited: false, children: [] },
+              { id: 203, name: "Ajay", value: 0, edited: false, children: [] },
               ] },
-      { name: "Ishwar-ji", value: 0.125, edited: false, isTopLevel: true,
+      { id: 3, name: "Ishwar-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
-              { name: "Dinesh", value: 0, edited: false, children: [] },
-              { name: "Kishore", value: 0, edited: false, children: [] },
-              { name: "Vijay", value: 0, edited: false, children: [] },
+              { id: 301, name: "Dinesh", value: 0, edited: false, children: [] },
+              { id: 302, name: "Kishore", value: 0, edited: false, children: [] },
+              { id: 303, name: "Vijay", value: 0, edited: false, children: [] },
               ] },
-      { name: "Vigyanchand-ji", value: 0.125, edited: false, isTopLevel: true,
+      { id: 4, name: "Vigyanchand-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
-              { name: "Vikas", value: 0, edited: false, children: [] },
-              { name: "Pragati", value: 0, edited: false, children: [] },
-              { name: "Subhash", value: 0, edited: false, children: [] },
-              { name: "Chandrashekhar", value: 0, edited: false, children: [] },
+              { id: 401, name: "Vikas", value: 0, edited: false, children: [] },
+              { id: 402, name: "Pragati", value: 0, edited: false, children: [] },
+              { id: 403, name: "Subhash", value: 0, edited: false, children: [] },
+              { id: 404, name: "Chandrashekhar", value: 0, edited: false, children: [] },
               ] },
-      { name: "Parmeshwar-ji", value: 0.125, edited: false, isTopLevel: true,
+      { id: 5, name: "Parmeshwar-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
-              { name: "Pradeep", value: 0, edited: false, children: [] },
-              { name: "Sanjay", value: 0, edited: false, children: [] },
-              { name: "Abhijeet", value: 0, edited: false, children: [] },
-              { name: "Ravi", value: 0, edited: false, children: [] },
-              { name: "Mamta", value: 0, edited: false, children: [] },
-              { name: "Kiran", value: 0, edited: false, children: [] },
-              { name: "child7", value: 0, edited: false, children: [] },
-              { name: "child8", value: 0, edited: false, children: [] },
-              { name: "child9", value: 0, edited: false, children: [] },] },
-      { name: "Pratapchand-ji", value: 0.125, edited: false, isTopLevel: true,
-          children: [
-              { name: "Shailendra", value: 0, edited: false, children: [] },
-              { name: "Smita", value: 0, edited: false, children: [] },
-              { name: "Kavita", value: 0, edited: false, children: [] },
-              { name: "Nishith", value: 0, edited: false, children: [] },
+              { id: 501, name: "Pradeep", value: 0, edited: false, children: [] },
+              { id: 502, name: "Sanjay", value: 0, edited: false, children: [] },
+              { id: 503, name: "Abhijeet", value: 0, edited: false, children: [] },
+              { id: 504, name: "Ravi", value: 0, edited: false, children: [] },
+              { id: 505, name: "Mamta", value: 0, edited: false, children: [] },
+              { id: 506, name: "Kiran", value: 0, edited: false, children: [] },
+              { id: 507, name: "child7", value: 0, edited: false, children: [] },
+              { id: 508, name: "child8", value: 0, edited: false, children: [] },
+              { id: 509, name: "child9", value: 0, edited: false, children: [] },
               ] },
-      { name: "Jagdish-ji", value: 0.125, edited: false, isTopLevel: true,
+      { id: 6, name: "Pratapchand-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
-              { name: "Soumit", value: 0, edited: false, children: [] },
-              { name: "Satyen", value: 0, edited: false, children: [] },
+              { id: 601, name: "Shailendra", value: 0, edited: false, children: [] },
+              { id: 602, name: "Smita", value: 0, edited: false, children: [] },
+              { id: 603, name: "Kavita", value: 0, edited: false, children: [] },
+              { id: 604, name: "Nishith", value: 0, edited: false, children: [] },
+              ] },
+      { id: 7, name: "Jagdish-ji", value: 0.125, edited: false, isTopLevel: true,
+          children: [
+              { id: 701, name: "Soumit", value: 0, edited: false, children: [] },
+              { id: 702, name: "Satyen", value: 0, edited: false, children: [] },
               ] },
       {
-        name: "Aa-ji",
-        value: 0.125,
-        edited: false,
-        isTopLevel: true,
+        id: 8, name: "Aa-ji", value: 0.125, edited: false, isTopLevel: true,
         children: [
-          { name: "Sudarshan-ji", value: 0, edited: false,
+          { id: 801, name: "Sudarshan-ji", value: 0, edited: false,
               children: [
-                  { name: "Avinash", value: 0, edited: false, children: [] },
-                  { name: "Nanda", value: 0, edited: false, children: [] },
-                  { name: "Bharti", value: 0, edited: false, children: [] },
-                  { name: "Manju", value: 0, edited: false, children: [] },
+                  { id: 8011, name: "Avinash", value: 0, edited: false, children: [] },
+                  { id: 8012, name: "Nanda", value: 0, edited: false, children: [] },
+                  { id: 8013, name: "Bharti", value: 0, edited: false, children: [] },
+                  { id: 8014, name: "Manju", value: 0, edited: false, children: [] },
                   ] },
-          { name: "Shripal-ji", value: 0, edited: false,
+          { id: 802, name: "Shripal-ji", value: 0, edited: false,
               children: [
-                  { name: "Kiran", value: 0, edited: false, children: [] },
-                  { name: "Charu", value: 0, edited: false, children: [] },
-                  { name: "Ajay", value: 0, edited: false, children: [] },
+                  { id: 8021, name: "Kiran", value: 0, edited: false, children: [] },
+                  { id: 8022, name: "Charu", value: 0, edited: false, children: [] },
+                  { id: 8023, name: "Ajay", value: 0, edited: false, children: [] },
                   ] },
-          { name: "Ishwar-ji", value: 0, edited: false,
+          { id: 803, name: "Ishwar-ji", value: 0, edited: false,
               children: [
-                  { name: "Dinesh", value: 0, edited: false, children: [] },
-                  { name: "Kishore", value: 0, edited: false, children: [] },
-                  { name: "Vijay", value: 0, edited: false, children: [] },
+                  { id: 8031, name: "Dinesh", value: 0, edited: false, children: [] },
+                  { id: 8032, name: "Kishore", value: 0, edited: false, children: [] },
+                  { id: 8033, name: "Vijay", value: 0, edited: false, children: [] },
                   ] },
-          { name: "Vigyanchand-ji", value: 0, edited: false,
+          { id: 804, name: "Vigyanchand-ji", value: 0, edited: false,
               children: [
-                  { name: "Vikas", value: 0, edited: false, children: [] },
-                  { name: "Pragati", value: 0, edited: false, children: [] },
-                  { name: "Subhash", value: 0, edited: false, children: [] },
-                  { name: "Chandrashekhar", value: 0, edited: false, children: [] },
+                  { id: 8041, name: "Vikas", value: 0, edited: false, children: [] },
+                  { id: 8042, name: "Pragati", value: 0, edited: false, children: [] },
+                  { id: 8043, name: "Subhash", value: 0, edited: false, children: [] },
+                  { id: 8044, name: "Chandrashekhar", value: 0, edited: false, children: [] },
                   ] },
-          { name: "Parmeshwar-ji", value: 0, edited: false,
+          { id: 805, name: "Parmeshwar-ji", value: 0, edited: false,
               children: [
-                  { name: "Pradeep", value: 0, edited: false, children: [] },
-                  { name: "Sanjay", value: 0, edited: false, children: [] },
-                  { name: "Abhijeet", value: 0, edited: false, children: [] },
-                  { name: "Ravi", value: 0, edited: false, children: [] },
-                  { name: "Mamta", value: 0, edited: false, children: [] },
-                  { name: "Kiran", value: 0, edited: false, children: [] },
-                  { name: "child7", value: 0, edited: false, children: [] },
-                  { name: "child8", value: 0, edited: false, children: [] },
-                  { name: "child9", value: 0, edited: false, children: [] },] },
-          { name: "Pratapchand-ji", value: 0, edited: false,
-              children: [
-                  { name: "Shailendra", value: 0, edited: false, children: [] },
-                  { name: "Smita", value: 0, edited: false, children: [] },
-                  { name: "Kavita", value: 0, edited: false, children: [] },
-                  { name: "Nishith", value: 0, edited: false, children: [] },
+                  { id: 8051, name: "Pradeep", value: 0, edited: false, children: [] },
+                  { id: 8052, name: "Sanjay", value: 0, edited: false, children: [] },
+                  { id: 8053, name: "Abhijeet", value: 0, edited: false, children: [] },
+                  { id: 8054, name: "Ravi", value: 0, edited: false, children: [] },
+                  { id: 8055, name: "Mamta", value: 0, edited: false, children: [] },
+                  { id: 8056, name: "Kiran", value: 0, edited: false, children: [] },
+                  { id: 8057, name: "child7", value: 0, edited: false, children: [] },
+                  { id: 8058, name: "child8", value: 0, edited: false, children: [] },
+                  { id: 8059, name: "child9", value: 0, edited: false, children: [] },
                   ] },
-          { name: "Jagdish-ji", value: 0, edited: false,
+          { id: 806, name: "Pratapchand-ji", value: 0, edited: false,
               children: [
-                  { name: "Soumit", value: 0, edited: false, children: [] },
-                  { name: "Satyen", value: 0, edited: false, children: [] },
+                  { id: 8061, name: "Shailendra", value: 0, edited: false, children: [] },
+                  { id: 8062, name: "Smita", value: 0, edited: false, children: [] },
+                  { id: 8063, name: "Kavita", value: 0, edited: false, children: [] },
+                  { id: 8064, name: "Nishith", value: 0, edited: false, children: [] },
                   ] },
-          {
-            name: "Laxmibai-ji",
-            value: 0,
-            edited: false,
+          { id: 807, name: "Jagdish-ji", value: 0, edited: false,
+              children: [
+                  { id: 8071, name: "Soumit", value: 0, edited: false, children: [] },
+                  { id: 8072, name: "Satyen", value: 0, edited: false, children: [] },
+                  ] },
+          { id: 808, name: "Laxmibai-ji", value: 0, edited: false,
             children: [
-              { name: "Arun", value: 0, edited: false, children: [] },
-              { name: "Gautam", value: 0, edited: false, children: [] },
-              { name: "Munni", value: 0, edited: false, children: [] },
-              { name: "Neelima", value: 0, edited: false, children: [] },
+              { id: 8081, name: "Arun", value: 0, edited: false, children: [] },
+              { id: 8082, name: "Gautam", value: 0, edited: false, children: [] },
+              { id: 8083, name: "Munni", value: 0, edited: false, children: [] },
+              { id: 8084, name: "Neelima", value: 0, edited: false, children: [] },
             ],
           },
         ],
       },
 ];
 
-const CloudSpinnerGrid: React.FC = () => {
+const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
   const [spinners, setSpinners] = useState<Spinner[]>(initialTreeData);
-  const [total, setTotal] = useState(0);
+  const [total, updateTotal] = useState(1);
+
+  const handleUpdateTotal = () => {
+    const newTotal = total + 1; // Example logic to update total
+    updateTotal(newTotal);
+    setTotal(newTotal); // Update total in parent component
+  };
 
   const calculateTotal = () => {
     return spinners.reduce((sum, spinner) => sum + spinner.value, 0);
@@ -169,7 +176,15 @@ const CloudSpinnerGrid: React.FC = () => {
         };
       })
     );
-    setTotal(1); // Ensure total remains 1
+
+    // ✅ Update total state
+    setTotal(1);
+
+    // ✅ Also update total in UI dynamically
+    const totalElement = document.getElementById("totalValue");
+    if (totalElement) {
+      totalElement.textContent = "1"; // Ensure the total displays correctly
+    }
   };
 
   const findParent = (nodes: Spinner[], child: Spinner): Spinner | null => {
@@ -218,17 +233,40 @@ const CloudSpinnerGrid: React.FC = () => {
     setSpinners([...spinners]); // Trigger re-render
   };
 
-  const handleAddChild = (parent: Spinner) => {
-    const newChildName = `Child ${parent.children.length + 1}`;
-    const numChildren = parent.children.length + 1; // New total count including the new child
+  const handleAddChild = (parentId: number) => {
+    setSpinners((prevSpinners) => {
+      // Helper function to update the tree recursively
+      const updateTree = (spinners: Spinner[]): Spinner[] => {
+        return spinners.map((spinner) => {
+          if (spinner.id === parentId) {
+            const numChildren = spinner.children.length + 1;
+            const newChild: Spinner = {
+              id: Date.now(), // Assign a unique ID
+              name: `Child ${numChildren}`,
+              value: spinner.value / numChildren,
+              edited: false,
+              children: [],
+            };
 
-    // New child starts with equal share of the parent's value
-    const newChild: Spinner = {
-      name: newChildName,
-      value: parent.value / numChildren,
-      edited: false,
-      children: []
-    };
+            return {
+              ...spinner,
+              children: [...spinner.children, newChild].map((child) => ({
+                ...child,
+                value: spinner.value / numChildren, // Redistribute value
+              })),
+            };
+          } else {
+            return {
+              ...spinner,
+              children: updateTree(spinner.children), // Recurse into children
+            };
+          }
+        });
+      };
+
+      return updateTree(prevSpinners);
+    });
+  };
 
     // Distribute the parent's value equally among all children
     const updatedChildren = [...parent.children, newChild].map(child => ({
@@ -272,15 +310,34 @@ const CloudSpinnerGrid: React.FC = () => {
 
   return (
     <div className="container-fluid">
+      {/* Top Bar: Total + Reset Button */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="d-flex align-items-center gap-3">
           <span className="fw-bold">Total: {calculateTotal()}</span>
           <button className="btn btn-warning" onClick={handleReset}>Reset</button>
         </div>
       </div>
+
+      {/* Spinners Grid */}
       <div className="d-flex flex-wrap justify-content-between gap-2 overflow-x-auto">
-        {spinners.map((spinner, index) => (
-          <div key={index} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
+        {spinners.map((spinner) => (
+          <div key={spinner.id} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
+            {/* Increment & Decrement Buttons */}
+            <button
+              onClick={() => handleIncrement(spinner.id)}
+              disabled={spinner.edited === false} // Disable increment after reset
+            >
+              ➕
+            </button>
+
+            <button
+              onClick={() => handleDecrement(spinner.id)}
+              disabled={spinner.value <= 0} // Only disable decrement when value is 0
+            >
+              ➖
+            </button>
+
+            {/* Render Spinner Tree */}
             {renderTree([spinner])}
           </div>
         ))}
