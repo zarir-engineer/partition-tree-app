@@ -21,7 +21,7 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
   isTopLevel,  // Accept the new prop
 }) => {
   return (
-    <div className={`spinner-container p-3 rounded ${edited ? "bg-secondary" : ""}`}>
+    <div className={`spinner-container p-2 rounded ${edited ? 'bg-gray-200' : ''}`}>
       {/* Conditionally Show Plus/Minus Buttons */}
       {!isTopLevel && (
         <div className="d-flex justify-content-center gap-2 mb-2">

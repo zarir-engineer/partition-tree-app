@@ -133,6 +133,7 @@ const initialTreeData: Spinner[] = [
 
 const CloudSpinnerGrid: React.FC = () => {
   const [spinners, setSpinners] = useState<Spinner[]>(initialTreeData);
+  const [total, setTotal] = useState(0);
 
   const calculateTotal = () => {
     return spinners.reduce((sum, spinner) => sum + spinner.value, 0);
@@ -142,11 +143,31 @@ const CloudSpinnerGrid: React.FC = () => {
     setSpinners(initialTreeData.map(spinner => ({ ...spinner, value: 0, edited: false })));
   };
 
-  const handleValueChange = (spinner: Spinner, newValue: number) => {
-    spinner.value = newValue;
-    spinner.edited = true;
-    setSpinners([...spinners]);
+  const findParent = (nodes: Spinner[], child: Spinner): Spinner | null => {
+    for (const node of nodes) {
+      if (node.children.includes(child)) return node;
+      const found = findParent(node.children, child);
+      if (found) return found;
+    }
+    return null;
   };
+
+
+
+const handleValueChange = (node: Spinner, newValue: number) => {
+  const diff = newValue - node.value; // Find the difference
+  node.value = newValue;
+
+  // Update all ancestors
+  let parent = findParent(spinners, node);
+  while (parent) {
+    parent.value += diff;
+    parent = findParent(spinners, parent);
+  }
+
+  setTotal(prevTotal => prevTotal + diff); // Update total
+  setSpinners([...spinners]); // Trigger re-render
+};
 
   const handleNameChange = (spinner: Spinner, newName: string) => {
     spinner.name = newName;
@@ -162,7 +183,7 @@ const CloudSpinnerGrid: React.FC = () => {
           onChange={(newValue) => handleValueChange(node, newValue)}
           onNameChange={(newName) => handleNameChange(node, newName)}
           edited={node.edited}
-          total={0} // Update with actual total logic if needed
+          total={total} // Ensure this is passed
         />
         <div className="ms-4">{renderTree(node.children)}</div>
       </div>
@@ -178,7 +199,7 @@ const CloudSpinnerGrid: React.FC = () => {
           <button className="btn btn-warning" onClick={handleReset}>Reset</button>
         </div>
       </div>
-      <div className="d-flex flex-wrap justify-content-between gap-2">
+      <div className="flex flex-wrap justify-between gap-1 overflow-x-auto">
         {spinners.map((spinner, index) => (
           <div key={index} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
             {renderTree([spinner])}
