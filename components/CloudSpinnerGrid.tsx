@@ -148,6 +148,11 @@ const CloudSpinnerGrid: React.FC = () => {
     setSpinners([...spinners]);
   };
 
+  const handleNameChange = (spinner: Spinner, newName: string) => {
+    spinner.name = newName;
+    setSpinners([...spinners]);
+  };
+
   const renderTree = (nodes: Spinner[]) => {
     return nodes.map((node, index) => (
       <div key={index} className="mt-2">
@@ -155,6 +160,7 @@ const CloudSpinnerGrid: React.FC = () => {
           name={node.name}
           value={node.value}
           onChange={(newValue) => handleValueChange(node, newValue)}
+          onNameChange={(newName) => handleNameChange(node, newName)}
           edited={node.edited}
           total={0} // Update with actual total logic if needed
         />
