@@ -72,33 +72,33 @@ const initialTreeData: Spinner[] = [
       {
         id: 8, name: "Aa-ji", value: 0.125, edited: false, isTopLevel: true,
         children: [
-          { id: 801, name: "Sudarshan-ji", value: 0, edited: false,
+          { id: 801, name: "Sudarshan-ji", value: 0, edited: false, isTopLevel: true,
               children: [
                   { id: 8011, name: "Avinash", value: 0, edited: false, children: [] },
                   { id: 8012, name: "Nanda", value: 0, edited: false, children: [] },
                   { id: 8013, name: "Bharti", value: 0, edited: false, children: [] },
                   { id: 8014, name: "Manju", value: 0, edited: false, children: [] },
                   ] },
-          { id: 802, name: "Shripal-ji", value: 0, edited: false,
+          { id: 802, name: "Shripal-ji", value: 0, edited: false, isTopLevel: true,
               children: [
                   { id: 8021, name: "Kiran", value: 0, edited: false, children: [] },
                   { id: 8022, name: "Charu", value: 0, edited: false, children: [] },
                   { id: 8023, name: "Ajay", value: 0, edited: false, children: [] },
                   ] },
-          { id: 803, name: "Ishwar-ji", value: 0, edited: false,
+          { id: 803, name: "Ishwar-ji", value: 0, edited: false, isTopLevel: true,
               children: [
                   { id: 8031, name: "Dinesh", value: 0, edited: false, children: [] },
                   { id: 8032, name: "Kishore", value: 0, edited: false, children: [] },
                   { id: 8033, name: "Vijay", value: 0, edited: false, children: [] },
                   ] },
-          { id: 804, name: "Vigyanchand-ji", value: 0, edited: false,
+          { id: 804, name: "Vigyanchand-ji", value: 0, edited: false, isTopLevel: true,
               children: [
                   { id: 8041, name: "Vikas", value: 0, edited: false, children: [] },
                   { id: 8042, name: "Pragati", value: 0, edited: false, children: [] },
                   { id: 8043, name: "Subhash", value: 0, edited: false, children: [] },
                   { id: 8044, name: "Chandrashekhar", value: 0, edited: false, children: [] },
                   ] },
-          { id: 805, name: "Parmeshwar-ji", value: 0, edited: false,
+          { id: 805, name: "Parmeshwar-ji", value: 0, edited: false, isTopLevel: true,
               children: [
                   { id: 8051, name: "Pradeep", value: 0, edited: false, children: [] },
                   { id: 8052, name: "Sanjay", value: 0, edited: false, children: [] },
@@ -110,19 +110,19 @@ const initialTreeData: Spinner[] = [
                   { id: 8058, name: "child8", value: 0, edited: false, children: [] },
                   { id: 8059, name: "child9", value: 0, edited: false, children: [] },
                   ] },
-          { id: 806, name: "Pratapchand-ji", value: 0, edited: false,
+          { id: 806, name: "Pratapchand-ji", value: 0, edited: false, isTopLevel: true,
               children: [
                   { id: 8061, name: "Shailendra", value: 0, edited: false, children: [] },
                   { id: 8062, name: "Smita", value: 0, edited: false, children: [] },
                   { id: 8063, name: "Kavita", value: 0, edited: false, children: [] },
                   { id: 8064, name: "Nishith", value: 0, edited: false, children: [] },
                   ] },
-          { id: 807, name: "Jagdish-ji", value: 0, edited: false,
+          { id: 807, name: "Jagdish-ji", value: 0, edited: false, isTopLevel: true,
               children: [
                   { id: 8071, name: "Soumit", value: 0, edited: false, children: [] },
                   { id: 8072, name: "Satyen", value: 0, edited: false, children: [] },
                   ] },
-          { id: 808, name: "Laxmibai-ji", value: 0, edited: false,
+          { id: 808, name: "Laxmibai-ji", value: 0, edited: false, isTopLevel: true,
             children: [
               { id: 8081, name: "Arun", value: 0, edited: false, children: [] },
               { id: 8082, name: "Gautam", value: 0, edited: false, children: [] },
@@ -295,19 +295,21 @@ const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
     );
   };
 
-  const renderTree = (nodes: Spinner[]) => {
-    return nodes.map((node, index) => (
-      <div key={index} className="mt-2">
+  const renderSpinners = (spinners: Spinner[], parentId?: number) => {
+    return spinners.map((spinner) => (
+      <div key={spinner.id} style={{ marginLeft: parentId ? "20px" : "0px" }}>
         <CloudSpinner
-          name={node.name}
-          value={node.value}
-          isTopLevel={node.isTopLevel}
-          onChange={(newValue) => handleValueChange(node, newValue)}
-          onNameChange={(newName) => handleNameChange(node, newName)}
-          edited={node.edited}
-          total={total} // Ensure this is passed
+          name={spinner.name}
+          value={spinner.value}
+          onChange={(newValue) => handleValueChange(spinner, newValue)}
+          onNameChange={(newName) => handleNameChange(spinner, newName)} // ✅ Add this line
+          edited={spinner.edited}
+          total={total}
+          isTopLevel={spinner.isTopLevel}
         />
-        <div className="ms-4">{renderTree(node.children)}</div>
+        {spinner.children.length > 0 && (
+          <div>{renderSpinners(spinner.children, spinner.id)}</div>
+        )}
       </div>
     ));
   };
@@ -342,7 +344,7 @@ const CloudSpinnerGrid: React.FC<CloudSpinnerGridProps> = ({ setTotal }) => {
             </button>
 
             {/* Render Spinner Tree */}
-            {renderTree([spinner])}
+            {renderSpinners([spinner])}
           </div>
         ))}
       </div>
