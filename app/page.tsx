@@ -1,1 +1,1 @@
-export { default } from "../components/CloudSpinnerGrid";
+export { default } from "./components/CloudSpinnerGrid";
