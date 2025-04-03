@@ -2,15 +2,37 @@
 import React, { useEffect, useState } from "react";
 import CloudSpinner from "./CloudSpinner";
 import { Spinner, initialTreeData } from "../data/initialTreeData";
+import jsPDF from "jspdf";
 
 
 const MAX_CHILD_SPINNERS = 4;
+
 
 
 const CloudSpinnerGrid: React.FC = () => {
   const [spinners, setSpinners] = useState<Spinner[]>(initialTreeData);
   const [total, setTotal] = useState(1); // Move state here
 
+  const handleSaveToPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("Vile Parle, Mumbai", 10, 10);
+    doc.text("Legend: [1/8 means 0.125]", 10, 20);
+    doc.text(`Total: ${total}`, 10, 30);
+
+    let y = 40;
+    spinners.forEach((spinner) => {
+      doc.text(`${spinner.name}: ${spinner.value}`, 10, y);
+      y += 10;
+
+      spinner.children.forEach((child) => {
+        doc.text(`  - ${child.name}: ${child.value}`, 10, y);
+        y += 10;
+      });
+    });
+
+    doc.save("ratio-deal.pdf");
+  };
 
   const handleUpdateTotal = () => {
     const newTotal = total + 1; // Example logic to update total
@@ -239,6 +261,9 @@ const CloudSpinnerGrid: React.FC = () => {
           <span className="fw-bold">Total: {total}</span>
           <button className="btn btn-warning" onClick={handleReset}>
             Reset
+          </button>
+          <button className="btn btn-primary" onClick={handleSaveToPDF}>
+            Save to PDF
           </button>
         </div>
 
