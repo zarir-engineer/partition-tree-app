@@ -178,9 +178,9 @@ const CloudSpinnerGrid: React.FC = () => {
           <button className="btn btn-warning" onClick={handleReset}>Reset</button>
         </div>
       </div>
-      <div className="row">
+      <div className="d-flex flex-wrap justify-content-between gap-2">
         {spinners.map((spinner, index) => (
-          <div key={index} className="col-md-3">
+          <div key={index} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
             {renderTree([spinner])}
           </div>
         ))}
