@@ -1,5 +1,13 @@
 /* globals.css */
 
+button {
+  border: none;
+  background: none;
+  font-size: 1.2rem; /* Adjust size as needed */
+  cursor: pointer;
+}
+
+
 .legend {
     position: absolute;
     top: 10px;

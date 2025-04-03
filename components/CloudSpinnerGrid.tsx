@@ -8,38 +8,39 @@ interface Spinner {
   value: number;
   edited: boolean;
   children: Spinner[];
+  isTopLevel?: boolean; // ✅ Add this line
 }
 
 const MAX_CHILD_SPINNERS = 4;
 
 const initialTreeData: Spinner[] = [
-      { name: "Sudarshan-ji", value: 0, edited: false,
+      { name: "Sudarshan-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
               { name: "Avinash", value: 0, edited: false, children: [] },
               { name: "Nanda", value: 0, edited: false, children: [] },
               { name: "Bharti", value: 0, edited: false, children: [] },
               { name: "Manju", value: 0, edited: false, children: [] },
               ] },
-      { name: "Shripal-ji", value: 0, edited: false,
+      { name: "Shripal-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
               { name: "Kiran", value: 0, edited: false, children: [] },
               { name: "Charu", value: 0, edited: false, children: [] },
               { name: "Ajay", value: 0, edited: false, children: [] },
               ] },
-      { name: "Ishwar-ji", value: 0, edited: false,
+      { name: "Ishwar-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
               { name: "Dinesh", value: 0, edited: false, children: [] },
               { name: "Kishore", value: 0, edited: false, children: [] },
               { name: "Vijay", value: 0, edited: false, children: [] },
               ] },
-      { name: "Vigyanchand-ji", value: 0, edited: false,
+      { name: "Vigyanchand-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
               { name: "Vikas", value: 0, edited: false, children: [] },
               { name: "Pragati", value: 0, edited: false, children: [] },
               { name: "Subhash", value: 0, edited: false, children: [] },
               { name: "Chandrashekhar", value: 0, edited: false, children: [] },
               ] },
-      { name: "Parmeshwar-ji", value: 0, edited: false,
+      { name: "Parmeshwar-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
               { name: "Pradeep", value: 0, edited: false, children: [] },
               { name: "Sanjay", value: 0, edited: false, children: [] },
@@ -50,22 +51,23 @@ const initialTreeData: Spinner[] = [
               { name: "child7", value: 0, edited: false, children: [] },
               { name: "child8", value: 0, edited: false, children: [] },
               { name: "child9", value: 0, edited: false, children: [] },] },
-      { name: "Pratapchand-ji", value: 0, edited: false,
+      { name: "Pratapchand-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
               { name: "Shailendra", value: 0, edited: false, children: [] },
               { name: "Smita", value: 0, edited: false, children: [] },
               { name: "Kavita", value: 0, edited: false, children: [] },
               { name: "Nishith", value: 0, edited: false, children: [] },
               ] },
-      { name: "Jagdish-ji", value: 0, edited: false,
+      { name: "Jagdish-ji", value: 0.125, edited: false, isTopLevel: true,
           children: [
               { name: "Soumit", value: 0, edited: false, children: [] },
               { name: "Satyen", value: 0, edited: false, children: [] },
               ] },
       {
         name: "Aa-ji",
-        value: 0,
+        value: 0.125,
         edited: false,
+        isTopLevel: true,
         children: [
           { name: "Sudarshan-ji", value: 0, edited: false,
               children: [
@@ -192,7 +194,6 @@ const handleValueChange = (node: Spinner, newValue: number) => {
   return (
     <div className="container-fluid">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <span className="fw-bold">Vile Parle, Mumbai</span>
         <div className="d-flex align-items-center gap-3">
           <span className="fw-bold">Total: {calculateTotal()}</span>
           <button className="btn btn-warning" onClick={handleReset}>Reset</button>
