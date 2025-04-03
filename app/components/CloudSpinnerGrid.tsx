@@ -75,41 +75,43 @@ const CloudSpinnerGrid: React.FC = () => {
   };
 
   const handleValueChange = (node: Spinner, newValue: number) => {
-    const currentTotal = calculateTotal();
-    const difference = newValue - node.value; // How much the value is changing
+      const difference = newValue - node.value; // Change in value
+      node.value = newValue;
+      node.edited = true; // Mark as edited
 
-    // If new total exceeds 1, adjust other values or throw warning
-    if (currentTotal + difference > 1) {
-      alert("Total cannot exceed 1. Adjusting other values...");
-      const excess = (currentTotal + difference) - 1;
+      const parent = findParent(spinners, node);
+      if (parent) {
+          // Adjust siblings to maintain parent value
+          let untouchedSiblings = parent.children.filter(sp => sp !== node && !sp.edited && sp.value > 0);
+          let totalUntouched = untouchedSiblings.reduce((sum, sp) => sum + sp.value, 0);
 
-      // Try to distribute excess among other spinners
-      let remainingSpinners = spinners.filter(sp => sp !== node && sp.value > 0);
+          untouchedSiblings.forEach(sp => {
+              let proportion = sp.value / totalUntouched;
+              sp.value = Math.max(0, sp.value - proportion * difference);
+          });
 
-      if (remainingSpinners.length > 0) {
-        let distributeAmount = excess / remainingSpinners.length;
-
-        remainingSpinners.forEach(sp => {
-          sp.value = Math.max(0, sp.value - distributeAmount); // Reduce each spinner’s value
-        });
+          // Propagate change up to parent
+          parent.value = parent.children.reduce((sum, child) => sum + child.value, 0);
       } else {
-        alert("No values available to adjust. Cannot increase further.");
-        return;
+          // This is a top-level spinner
+          let untouchedTopLevel = spinners.filter(sp => sp !== node && !sp.edited && sp.value > 0);
+          let totalUntouched = untouchedTopLevel.reduce((sum, sp) => sum + sp.value, 0);
+
+          untouchedTopLevel.forEach(sp => {
+              let proportion = sp.value / totalUntouched;
+              sp.value = Math.max(0, sp.value - proportion * difference);
+          });
+
+          // Adjust children of the top-level spinner (unless edited)
+          node.children.forEach(child => {
+              if (!child.edited) {
+                  let childProportion = child.value / (node.value || 1);
+                  child.value = node.value * childProportion;
+              }
+          });
       }
-    }
 
-    // Update the child's value
-    node.value = newValue;
-
-    // Update parent values recursively
-    let parent = findParent(spinners, node);
-    while (parent) {
-      parent.value = parent.children.reduce((sum, child) => sum + child.value, 0);
-      parent = findParent(spinners, parent);
-    }
-
-    setSpinners([...spinners]); // Trigger re-render
-    setTotal(calculateTotal());  // ✅ Update total dynamically after all calculations
+      setSpinners([...spinners]); // Trigger re-render
   };
 
   const handleAddChild = (parentId: number) => {
@@ -184,7 +186,7 @@ const CloudSpinnerGrid: React.FC = () => {
           onNameChange={(newName) => handleNameChange(spinner, newName)} // ✅ Add this line
           edited={spinner.edited}
           total={total}
-          isTopLevel={spinner.isTopLevel}
+          isTopLevel={parentId === undefined} // ✅ Top-level has no parent
         />
         {spinner.children.length > 0 && (
           <div>{renderSpinners(spinner.children, spinner.id)}</div>
@@ -197,41 +199,31 @@ const CloudSpinnerGrid: React.FC = () => {
     <div className="container-fluid">
       {/* ✅ Location & Legend at the top */}
       <div className="legend-container">
-        <span>Vile Parle, Mumbai</span>
+        <h3>Vile Parle, Mumbai</h3>
         <span className="legend">Legend: [1/8 means 0.125]</span>
       </div>
 
-      {/* Top Bar: Total + Reset Button */}
+      {/* ✅ Top Bar: Total + Reset Button */}
       <div className="d-flex justify-content-end align-items-center gap-3 mb-3 w-100 px-4">
         <span className="fw-bold">Total: {total}</span>
-        <button className="btn btn-warning" onClick={handleReset}>
-          Reset
-        </button>
+        <button className="btn btn-warning" onClick={handleReset}>Reset</button>
       </div>
 
-      {/* Spinners Grid */}
-      <div className="d-flex flex-wrap justify-content-between gap-2 overflow-x-auto">
-        {spinners.map((spinner) => (
-          <div key={spinner.id} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
-            {/* Increment & Decrement Buttons */}
-            <button
-              onClick={() => handleIncrement(spinner.id)}
-              disabled={spinner.edited === false} // Disable increment after reset
-            >
-              ➕
-            </button>
+      {/* ✅ Fixed Top-Level Spinners */}
+      <div className="top-level-container d-flex justify-content-between">
+        {renderSpinners(spinners.filter(sp => sp.isTopLevel))}
+      </div>
 
-            <button
-              onClick={() => handleDecrement(spinner.id)}
-              disabled={spinner.value <= 0} // Only disable decrement when value is 0
-            >
-              ➖
-            </button>
-
-            {/* Render Spinner Tree */}
-            {renderSpinners([spinner])}
-          </div>
-        ))}
+      {/* ✅ Scrollable Child Widgets */}
+      <div className="scrollable-container d-flex flex-wrap justify-content-between gap-2 overflow-x-auto">
+        {spinners.map(spinner =>
+          spinner.children.length > 0 && (
+            <div key={spinner.id} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
+              {/* Render Spinner Tree */}
+              {renderSpinners([spinner])}
+            </div>
+          )
+        )}
       </div>
     </div>
   );

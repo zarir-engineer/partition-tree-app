@@ -1,5 +1,22 @@
 /* globals.css */
 
+/* freezing top level */
+.top-level-container {
+  position: sticky;
+  top: 0;
+  background: white; /* Ensure visibility over scrolling content */
+  z-index: 10; /* Ensure it stays above other elements */
+  padding: 10px;
+  border-bottom: 2px solid #ccc;
+}
+
+.scrollable-container {
+  max-height: 60vh; /* Adjust as needed */
+  overflow-y: auto;
+  padding-top: 10px;
+}
+
+
 button {
   border: none;
   background: none;

@@ -2,7 +2,6 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-> This code creates an interactive app where you can see a "top node" with the value 66.67 and 8 child nodes below it. 
-> Each child node displays a fraction value (1/8 initially). You can modify the values of the child nodes, and the app 
-> will automatically adjust them so that all fractions add up to 1 (100%). Additionally, buttons "+" and "-" allow 
-> users to add or remove nodes.
+> If a child’s value increases → Other children decrease proportionally, unless they have been manually edited by the user. 
+> If a top-level spinner’s value increases → Other top-level spinners decrease proportionally, unless edited already. 
+> Changes in a top-level spinner propagate down → Adjust its children accordingly, unless the child is manually edited.
