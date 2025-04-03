@@ -16,7 +16,7 @@ const Page = () => {
     <div className="min-h-screen w-full flex flex-col items-center">
       <div className="legend-container">
         <span>Vile Parle, Mumbai</span>
-        <span className="legend">Legend: [Your Legend Here]</span>
+        <span className="legend">Legend: [1/8 means 0.125]</span>
         <button className="reset-btn" onClick={handleReset}>Reset</button>
         <span className="total">Total: {total}</span> {/* Dynamic total */}
       </div>
