@@ -181,7 +181,6 @@ const CloudSpinnerGrid: React.FC = () => {
       <div className="row">
         {spinners.map((spinner, index) => (
           <div key={index} className="col-md-3">
-            <h5 contentEditable suppressContentEditableWarning>{spinner.name}</h5>
             {renderTree([spinner])}
           </div>
         ))}
