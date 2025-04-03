@@ -64,12 +64,11 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
         value={value}
         onChange={(e) => {
           const newValue = parseFloat(e.target.value);
-          if (!isNaN(newValue)) {
-            onChange(newValue); // Allow all updates
+          if (!isNaN(newValue) && (newValue < value || total + newValue - value <= 1)) {
+            onChange(newValue);
           }
         }}
         className="form-control"
-        disabled={false} // 🔥 Removed total condition
       />
     </div>
   );

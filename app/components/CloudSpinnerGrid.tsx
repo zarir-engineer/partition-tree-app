@@ -74,44 +74,61 @@ const CloudSpinnerGrid: React.FC = () => {
     return null;
   };
 
-  const handleValueChange = (node: Spinner, newValue: number) => {
-      const difference = newValue - node.value; // Change in value
-      node.value = newValue;
-      node.edited = true; // Mark as edited
+  const handleValueChange = (id: number, newValue: number) => {
+    setSpinners((prevSpinners) => {
+      let updatedSpinners = [...prevSpinners];
+      let currentTotal = calculateTotal();
 
-      const parent = findParent(spinners, node);
-      if (parent) {
-          // Adjust siblings to maintain parent value
-          let untouchedSiblings = parent.children.filter(sp => sp !== node && !sp.edited && sp.value > 0);
-          let totalUntouched = untouchedSiblings.reduce((sum, sp) => sum + sp.value, 0);
+      const findAndUpdateSpinner = (spinners: Spinner[], parent: Spinner | null = null): Spinner[] => {
+        return spinners.map((spinner) => {
+          if (spinner.id === id) {
+            const difference = newValue - spinner.value;
+            const newTotal = currentTotal + difference;
 
-          untouchedSiblings.forEach(sp => {
-              let proportion = sp.value / totalUntouched;
-              sp.value = Math.max(0, sp.value - proportion * difference);
-          });
+            if (newTotal > 1) {
+              const excess = newTotal - 1;
+              let adjusted = false;
 
-          // Propagate change up to parent
-          parent.value = parent.children.reduce((sum, child) => sum + child.value, 0);
-      } else {
-          // This is a top-level spinner
-          let untouchedTopLevel = spinners.filter(sp => sp !== node && !sp.edited && sp.value > 0);
-          let totalUntouched = untouchedTopLevel.reduce((sum, sp) => sum + sp.value, 0);
+              // Find unedited siblings to decrease
+              const siblings = parent ? parent.children : updatedSpinners;
+              siblings.forEach((sibling) => {
+                if (sibling.id !== id && !sibling.edited && sibling.value > 0) {
+                  const reduction = Math.min(sibling.value, excess);
+                  sibling.value -= reduction;
+                  adjusted = true;
+                }
+              });
 
-          untouchedTopLevel.forEach(sp => {
-              let proportion = sp.value / totalUntouched;
-              sp.value = Math.max(0, sp.value - proportion * difference);
-          });
-
-          // Adjust children of the top-level spinner (unless edited)
-          node.children.forEach(child => {
-              if (!child.edited) {
-                  let childProportion = child.value / (node.value || 1);
-                  child.value = node.value * childProportion;
+              if (!adjusted) {
+                alert("Cannot increase further as no unedited values are available.");
+                return spinner; // Don't update if no adjustment possible
               }
-          });
-      }
+            }
 
-      setSpinners([...spinners]); // Trigger re-render
+            // Set new value and mark as edited
+            return { ...spinner, value: newValue, edited: true };
+          }
+
+          // Recursively update children
+          return { ...spinner, children: findAndUpdateSpinner(spinner.children, spinner) };
+        });
+      };
+
+      updatedSpinners = findAndUpdateSpinner(updatedSpinners);
+
+      // Recalculate parent values
+      const updateParentValues = (spinners: Spinner[]) => {
+        return spinners.map((spinner) => {
+          if (spinner.children.length > 0) {
+            spinner.value = spinner.children.reduce((sum, child) => sum + child.value, 0);
+            spinner.children = updateParentValues(spinner.children);
+          }
+          return spinner;
+        });
+      };
+
+      return updateParentValues(updatedSpinners);
+    });
   };
 
   const handleAddChild = (parentId: number) => {
@@ -151,9 +168,22 @@ const CloudSpinnerGrid: React.FC = () => {
     });
   };
 
-  const handleNameChange = (spinner: Spinner, newName: string) => {
-    spinner.name = newName;
-    setSpinners([...spinners]);
+  const findSpinnerById = (spinners: Spinner[], id: number): Spinner | null => {
+    for (const spinner of spinners) {
+      if (spinner.id === id) return spinner; // Found the spinner
+      const foundInChildren = findSpinnerById(spinner.children, id);
+      if (foundInChildren) return foundInChildren; // Recursively check children
+    }
+    return null; // Not found
+  };
+
+  const handleNameChange = (nodeId: number, newName: string) => {
+    const node = findSpinnerById(spinners, nodeId);
+    if (!node) return; // Handle case where spinner is not found
+
+    node.name = newName; // Update name
+
+    setSpinners([...spinners]); // Trigger re-render
   };
 
   const handleIncrement = (spinnerId: number) => {
@@ -182,8 +212,8 @@ const CloudSpinnerGrid: React.FC = () => {
         <CloudSpinner
           name={spinner.name}
           value={spinner.value}
-          onChange={(newValue) => handleValueChange(spinner, newValue)}
-          onNameChange={(newName) => handleNameChange(spinner, newName)} // ✅ Add this line
+          onChange={(newValue) => handleValueChange(spinner.id, newValue)}
+          onNameChange={(newName) => handleNameChange(spinner.id, newName)} // ✅ Add this line
           edited={spinner.edited}
           total={total}
           isTopLevel={parentId === undefined} // ✅ Top-level has no parent
@@ -197,33 +227,49 @@ const CloudSpinnerGrid: React.FC = () => {
 
   return (
     <div className="container-fluid">
-      {/* ✅ Location & Legend at the top */}
-      <div className="legend-container">
-        <h3>Vile Parle, Mumbai</h3>
-        <span className="legend">Legend: [1/8 means 0.125]</span>
+      {/* ✅ Fixed Header Section */}
+      <div className="fixed-container">
+        <div className="legend-container">
+          <h3>Vile Parle, Mumbai</h3>
+          <span className="legend">Legend: [1/8 means 0.125]</span>
+        </div>
+
+        {/* Top Bar: Total + Reset Button */}
+        <div className="d-flex justify-content-end align-items-center gap-3 mb-3 w-100 px-4">
+          <span className="fw-bold">Total: {total}</span>
+          <button className="btn btn-warning" onClick={handleReset}>
+            Reset
+          </button>
+        </div>
+
+        {/* ✅ Fixed Top-Level Spinners */}
+        <div className="top-level-container d-flex justify-content-between">
+          {spinners
+            .filter((sp) => sp.isTopLevel)
+            .map((topLevel) => (
+              <CloudSpinner
+                key={topLevel.id}
+                name={topLevel.name}
+                value={topLevel.value}
+                total={total}
+                onChange={(newValue) => handleValueChange(topLevel.id, newValue)}
+                onNameChange={(newName) => handleNameChange(topLevel.id, newName)}
+                edited={topLevel.edited}
+                isTopLevel={true} // Explicitly set
+              />
+            ))}
+        </div>
       </div>
 
-      {/* ✅ Top Bar: Total + Reset Button */}
-      <div className="d-flex justify-content-end align-items-center gap-3 mb-3 w-100 px-4">
-        <span className="fw-bold">Total: {total}</span>
-        <button className="btn btn-warning" onClick={handleReset}>Reset</button>
-      </div>
-
-      {/* ✅ Fixed Top-Level Spinners */}
-      <div className="top-level-container d-flex justify-content-between">
-        {renderSpinners(spinners.filter(sp => sp.isTopLevel))}
-      </div>
-
-      {/* ✅ Scrollable Child Widgets */}
-      <div className="scrollable-container d-flex flex-wrap justify-content-between gap-2 overflow-x-auto">
-        {spinners.map(spinner =>
-          spinner.children.length > 0 && (
-            <div key={spinner.id} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
-              {/* Render Spinner Tree */}
-              {renderSpinners([spinner])}
+      {/* ✅ Scrollable Children Section */}
+      <div className="scrollable-container">
+        {spinners
+          .filter((sp) => sp.isTopLevel)
+          .map((topLevel) => (
+            <div key={topLevel.id} className="p-2">
+              {renderSpinners(topLevel.children)}
             </div>
-          )
-        )}
+          ))}
       </div>
     </div>
   );
