@@ -30,7 +30,7 @@ export const initialTreeData: Spinner[] = [
               ] },
       { id: 4, name: "Vigyanchand", value: 0.125, edited: false, isTopLevel: true,
           children: [
-              { id: 401, name: "Vikas", value: 0, edited: false, children: [] },
+              { id: 401, name: "Vikas", value: 0, edited: false, isTopLevel: false,  children: [] },
               { id: 402, name: "Pragati", value: 0, edited: false, isTopLevel: false,  children: [] },
               { id: 403, name: "Subhash", value: 0, edited: false, isTopLevel: false,  children: [] },
               { id: 404, name: "Chandrashekhar", value: 0, edited: false, isTopLevel: false,  children: [] },
