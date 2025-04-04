@@ -1,79 +1,84 @@
-"use client";
-import { useState } from "react";
+// components/CloudSpinner.tsx
+import React, { useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { formatNumber } from '@/utils/math';
 
 interface CloudSpinnerProps {
+  id: string;
   name: string;
   value: number;
-  total: number; // Add total as a prop
-  onChange: (newValue: number) => void;
+  locked?: boolean;
   onNameChange: (newName: string) => void;
-  edited: boolean;
-  isTopLevel?: boolean;  // New prop to check if it's a top-level spinner
+  onAddChild: () => void;
 }
 
-const CloudSpinner: React.FC<CloudSpinnerProps> = ({
+export const CloudSpinner: React.FC<CloudSpinnerProps> = ({
+  id,
   name,
   value,
-  onChange,
+  locked = false,
   onNameChange,
-  edited,
-  total,
-  isTopLevel,  // Accept the new prop
+  onAddChild,
 }) => {
+  const [editing, setEditing] = useState(false);
+  const [tempName, setTempName] = useState(name);
+
+  const handleNameClick = () => {
+    if (!locked) setEditing(true);
+  };
+
+  const handleBlur = () => {
+    setEditing(false);
+    onNameChange(tempName.trim() || name);
+  };
+
   return (
-    <div
-      className="spinner-container p-2 rounded text-center"
-      style={{
-        width: "120px",
-        backgroundColor: edited ? "#e5e5e5" : "transparent" // Light gray when edited
-      }}
-    >
-      {/* Conditionally Show Plus/Minus Buttons */}
-      {!isTopLevel && (
-        <div className="d-flex justify-content-center gap-2 mb-2">
-          <button
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => onChange(value + 1)}
-          >
-            +
-          </button>
-          <button
-            className="btn btn-outline-danger btn-sm"
-            onClick={() => onChange(value - 1)}
-            disabled={value <= 0} // Prevents negative values
-          >
-            -
-          </button>
-        </div>
-      )}
+    <div className="relative flex flex-col items-center gap-1 p-2">
+      <div className="relative flex items-center justify-center bg-blue-200 rounded-full w-20 h-20 shadow-md">
+        <span className="text-sm font-medium">
+          {formatNumber(value)}
+        </span>
 
-      {/* Editable Name */}
-      <h5
-        contentEditable
-        suppressContentEditableWarning
-        onBlur={(e) => onNameChange(e.target.innerText.trim())} // Trim to prevent accidental spaces
-        className="editable-name text-center"
-      >
-        {name}
-      </h5>
+        {/* Left ear */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute -top-2 -left-2 w-6 h-6 rounded-full border border-black text-xs leading-none"
+          onClick={onAddChild}
+        >
+          +
+        </Button>
 
-      {/* Number Input */}
-      {!isTopLevel && (
-        <input
-          type="number"
-          step="0.001"
-          value={value}
-          onChange={(e) => {
-            const newValue = parseFloat(e.target.value);
-            if (!isNaN(newValue) && (newValue < value || total + newValue - value <= 1)) {
-              onChange(newValue);
-            }
-          }}
-          className="form-control"
-        />
-      )}
+        {/* Right ear - hidden or future use */}
+        {/* <Button variant="ghost" size="icon" className="absolute -top-2 -right-2 w-6 h-6 rounded-full border border-black text-xs">-</Button> */}
+      </div>
+
+      <div className="w-full text-center">
+        {editing ? (
+          <Input
+            value={tempName}
+            autoFocus
+            onChange={(e) => setTempName(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleBlur();
+            }}
+            className="text-center text-sm"
+          />
+        ) : (
+          <span
+            className={`text-sm font-semibold cursor-pointer ${
+              locked ? 'opacity-70' : ''
+            }`}
+            onClick={handleNameClick}
+            title={locked ? 'Top-level node (locked)' : 'Click to edit name'}
+          >
+            {name}
+            {locked && <span className="ml-1 text-xs text-gray-500">🔒</span>}
+          </span>
+        )}
+      </div>
     </div>
   );
 };
-
-export default CloudSpinner
