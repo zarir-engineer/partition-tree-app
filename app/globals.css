@@ -16,6 +16,11 @@
   padding-top: 10px;
 }
 
+.scrollable-children {
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
 
 button {
   border: none;
