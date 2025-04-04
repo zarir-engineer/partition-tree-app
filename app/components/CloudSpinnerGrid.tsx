@@ -295,12 +295,12 @@ const CloudSpinnerGrid: React.FC = () => {
           </div>
         </div>
 
-        {/* ✅ Scrollable Children Section */}
-        <div className="scrollable-children">
+        {/* ✅ Scrollable Children Section (Proper Grid) */}
+        <div className="row scrollable-children px-2">
           {spinners
             .filter((sp) => sp.isTopLevel)
             .map((topLevel) => (
-              <div key={topLevel.id} className="p-2">
+              <div key={topLevel.id} className="col-12 col-md-6 col-lg-3">
                 {renderSpinners(topLevel.children)}
               </div>
             ))}
