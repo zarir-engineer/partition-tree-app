@@ -304,10 +304,6 @@ const CloudSpinnerGrid: React.FC = () => {
             .filter((sp) => sp.isTopLevel)
             .map((topLevel) => (
               <div key={topLevel.id}>
-                {/* Top-Level Spinner Name or Placeholder */}
-                <div className="fw-bold text-center mb-2">{topLevel.name}</div>
-
-                {/* Render children if they exist */}
                 {topLevel.children.length > 0 ? (
                   renderSpinners(topLevel.children)
                 ) : (
