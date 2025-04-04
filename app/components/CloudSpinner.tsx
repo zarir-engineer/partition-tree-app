@@ -58,18 +58,20 @@ const CloudSpinner: React.FC<CloudSpinnerProps> = ({
       </h5>
 
       {/* Number Input */}
-      <input
-        type="number"
-        step="0.001"
-        value={value}
-        onChange={(e) => {
-          const newValue = parseFloat(e.target.value);
-          if (!isNaN(newValue) && (newValue < value || total + newValue - value <= 1)) {
-            onChange(newValue);
-          }
-        }}
-        className="form-control"
-      />
+      {!isTopLevel && (
+        <input
+          type="number"
+          step="0.001"
+          value={value}
+          onChange={(e) => {
+            const newValue = parseFloat(e.target.value);
+            if (!isNaN(newValue) && (newValue < value || total + newValue - value <= 1)) {
+              onChange(newValue);
+            }
+          }}
+          className="form-control"
+        />
+      )}
     </div>
   );
 };

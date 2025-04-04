@@ -15,19 +15,29 @@ const CloudSpinnerGrid: React.FC = () => {
 
   const handleSaveToPDF = () => {
     const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.height;
+
     doc.setFontSize(16);
     doc.text("Vile Parle, Mumbai", 10, 10);
     doc.text("Legend: [1/8 means 0.125]", 10, 20);
     doc.text(`Total: ${total}`, 10, 30);
 
     let y = 40;
-    spinners.forEach((spinner) => {
-      doc.text(`${spinner.name}: ${spinner.value}`, 10, y);
+
+  const addTextWithPagination = (text: string) => {
+      if (y > pageHeight - 20) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(text, 10, y);
       y += 10;
+    };
+
+    spinners.forEach((spinner) => {
+      addTextWithPagination(`${spinner.name}: ${spinner.value}`);
 
       spinner.children.forEach((child) => {
-        doc.text(`  - ${child.name}: ${child.value}`, 10, y);
-        y += 10;
+        addTextWithPagination(`  - ${child.name}: ${child.value}`);
       });
     });
 
@@ -238,7 +248,7 @@ const CloudSpinnerGrid: React.FC = () => {
           onNameChange={(newName) => handleNameChange(spinner.id, newName)} // ✅ Add this line
           edited={spinner.edited}
           total={total}
-          isTopLevel={parentId === undefined} // ✅ Top-level has no parent
+          isTopLevel={!!(parentId === undefined)} // ✅ Top-level has no parent
         />
         {spinner.children.length > 0 && (
           <div>{renderSpinners(spinner.children, spinner.id)}</div>
@@ -249,45 +259,51 @@ const CloudSpinnerGrid: React.FC = () => {
 
   return (
     <div className="container-fluid">
-      {/* ✅ Fixed Header Section */}
-      <div className="fixed-container">
-        <div className="legend-container">
-          <h3>Vile Parle, Mumbai</h3>
-          <span className="legend">Legend: [1/8 means 0.125]</span>
+      <div className="main-scroll-container">
+        {/* ✅ Sticky Top-Level Content */}
+        <div className="top-level-container">
+          <div className="legend-container">
+            <h3>Vile Parle, Mumbai</h3>
+            <span className="legend">Legend: [1/8 means 0.125]</span>
+          </div>
+
+          <div className="d-flex justify-content-end align-items-center gap-3 mb-3 w-100 px-4">
+            <span className="fw-bold">Total: {total}</span>
+            <button className="btn btn-warning" onClick={handleReset}>
+              Reset
+            </button>
+            <button className="btn btn-primary" onClick={handleSaveToPDF}>
+              Save to PDF
+            </button>
+          </div>
+
+          <div className="d-flex justify-content-between flex-wrap">
+            {spinners
+              .filter((sp) => sp.isTopLevel)
+              .map((topLevel) => (
+                <CloudSpinner
+                  key={topLevel.id}
+                  name={topLevel.name}
+                  value={topLevel.value}
+                  total={total}
+                  onChange={(newValue) => handleValueChange(topLevel.id, newValue)}
+                  onNameChange={(newName) => handleNameChange(topLevel.id, newName)}
+                  edited={topLevel.edited}
+                  isTopLevel={true}
+                />
+              ))}
+          </div>
         </div>
 
-        {/* Top Bar: Total + Reset + Save to PDF */}
-        <div className="d-flex justify-content-end align-items-center gap-3 mb-3 w-100 px-4">
-          <span className="fw-bold">Total: {total}</span>
-          <button className="btn btn-warning" onClick={handleReset}>
-            Reset
-          </button>
-          <button className="btn btn-primary" onClick={handleSaveToPDF}>
-            Save to PDF
-          </button>
-        </div>
-
-        {/* ✅ Improved Top-Level Spinners Layout */}
-        <div className="d-flex flex-wrap justify-content-between gap-2 overflow-x-auto">
-          {spinners.filter(sp => sp.isTopLevel).map(topLevel => (
-            <div key={topLevel.id} className="p-2" style={{ flex: "1 1 calc(12.5% - 10px)" }}>
-              {/* Render Top-Level Spinner */}
-              <CloudSpinner
-                name={topLevel.name}
-                value={topLevel.value}
-                total={total}
-                onChange={(newValue) => handleValueChange(topLevel.id, newValue)}
-                onNameChange={(newName) => handleNameChange(topLevel.id, newName)}
-                edited={topLevel.edited}
-                isTopLevel={true}
-              />
-
-              {/* ✅ Render Children Directly Under Parent */}
-              <div className="d-flex flex-column align-items-center mt-2">
-                {topLevel.children.length > 0 && renderSpinners(topLevel.children)}
+        {/* ✅ Scrollable Children Section */}
+        <div className="scrollable-children">
+          {spinners
+            .filter((sp) => sp.isTopLevel)
+            .map((topLevel) => (
+              <div key={topLevel.id} className="p-2">
+                {renderSpinners(topLevel.children)}
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>
