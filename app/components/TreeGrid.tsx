@@ -28,9 +28,9 @@ export const TreeGrid: React.FC<TreeGridProps> = ({
   ];
 
   return (
-    <div className="grid grid-cols-8 gap-4 px-4 py-2 w-full overflow-x-auto">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 p-4 w-full">
       {treeData.map((node) => (
-        <div key={node.id}>
+        <div key={node.id} className="min-w-[180px] max-w-[250px]">
           <TreeColumn
             node={node}
             onUpdateNode={onUpdateNode}
