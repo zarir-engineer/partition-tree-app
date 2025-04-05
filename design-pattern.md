@@ -79,7 +79,7 @@ Makes the component tree maintainable and testable.
 
 ### 💡 How It’s Used:
 - Container components (e.g., `TreeGrid`, `TreeColumn`) manage logic and layout.
-- Presentational components (e.g., `SpinnerNode`) are visual only and receive props.
+- Presentational components (e.g., `TreeNode`) are visual only and receive props.
 
 ---
 
@@ -100,7 +100,7 @@ Makes the component tree maintainable and testable.
 | Custom Hook            | Reusable and readable logic              | `useTreeLogic.ts`               |
 | Strategy               | Flexible formatting                      | `rounding.ts`                   |
 | Module                 | Utility encapsulation                    | `utils/` folder                 |
-| Container/Presentational | UI logic separation                    | `TreeGrid`, `SpinnerNode`, etc. |
+| Container/Presentational | UI logic separation                    | `TreeGrid`, `TreeNode`, etc. |
 | Memento (optional)     | Undo/Redo                                | Future: history/command stack   |
 | Command (optional)     | Grouped state changes                    | Future: batch changes           |
 | Visitor (optional)     | Uniform ops on all nodes                 | Future: export, validation      |

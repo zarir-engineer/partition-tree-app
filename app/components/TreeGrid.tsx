@@ -4,10 +4,11 @@ import React from 'react';
 import { TreeNode } from '@/types/TreeNode';
 import { TreeColumn } from './TreeColumn';
 
-interface TreeGridProps {
-  treeData: Record<string, TreeNode>;
+export interface TreeGridProps {
+  treeData: TreeNode[];
   onUpdateNode: (id: string, updates: Partial<TreeNode>) => void;
   onAddChild: (parentId: string) => void;
+  onUpdate: (updatedTree: TreeNode[]) => void; // ✅ Add this line
 }
 
 export const TreeGrid: React.FC<TreeGridProps> = ({
@@ -28,20 +29,15 @@ export const TreeGrid: React.FC<TreeGridProps> = ({
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 px-4 py-2 w-full overflow-x-auto">
-      {topLevelKeys.map((key) => {
-        const node = treeData[key];
-        return (
-          <div key={key}>
-            {node && (
-              <TreeColumn
-                node={node}
-                onUpdateNode={onUpdateNode}
-                onAddChild={onAddChild}
-              />
-            )}
-          </div>
-        );
-      })}
+      {treeData.map((node) => (
+        <div key={node.id}>
+          <TreeColumn
+            node={node}
+            onUpdateNode={onUpdateNode}
+            onAddChild={onAddChild}
+          />
+        </div>
+      ))}
     </div>
   );
 };

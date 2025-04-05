@@ -88,7 +88,7 @@ cloud-spinner-ui/
 │   ├── assets/                     # Logos, icons, static images
 │   ├── components/                 # Reusable UI components
 │   │   ├── SpinnerTree.tsx        # Main tree structure and logic
-│   │   ├── SpinnerNode.tsx        # Individual spinner node (Mickey Mouse shape)
+│   │   ├── TreeNode.tsx        # Individual spinner node (Mickey Mouse shape)
 │   │   ├── Header.tsx             # Title, legend, Reset, Save to PDF
 │   │   └── PDFExporter.tsx        # PDF export logic
 │   │

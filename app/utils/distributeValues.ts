@@ -1,14 +1,12 @@
 // utils/distributeValues.ts
-export function distributeValuesRecursively(node) {
+import { TreeNode } from "@/types/TreeNode"; // or wherever your type is
+
+export function distributeValuesRecursively(node: TreeNode): void {
   if (!node.children || node.children.length === 0) return;
 
   const share = node.value / node.children.length;
-  node.children = node.children.map((child) => ({
-    ...child,
-    value: share,
-  }));
-
   node.children.forEach((child) => {
+    child.value = parseFloat(share.toPrecision(3)); // 3 significant figures
     distributeValuesRecursively(child);
   });
 }
