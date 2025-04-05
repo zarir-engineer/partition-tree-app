@@ -41,3 +41,11 @@ export const Button: FC<ButtonProps> = ({
 };
 
 export default Button;
+//
+// // components/ui/button.tsx
+// import React from "react";
+// export const Button = ({ children, onClick }: any) => (
+//   <button className="border p-2 rounded bg-white shadow" onClick={onClick}>
+//     {children}
+//   </button>
+// );

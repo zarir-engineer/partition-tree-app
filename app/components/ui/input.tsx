@@ -13,3 +13,9 @@ export const Input: React.FC<InputProps> = (props) => {
 };
 
 export default Input;
+//
+// // components/ui/input.tsx
+// import React from "react";
+// export const Input = ({ value, onChange }: any) => (
+//   <input className="border rounded p-1" value={value} onChange={onChange} />
+// );

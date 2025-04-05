@@ -31,10 +31,11 @@ export const TreeGrid: React.FC<TreeGridProps> = ({
   const topLevelNodes = topLevelKeys
     .map((id) => treeData.find((node) => node.id === id))
     .filter((node): node is TreeNode => !!node);
+  console.log('Top-level nodes:', treeData);
 
   return (
 //     <div className="grid grid-cols-8 gap-4 w-full overflow-x-auto">
-    <div className="grid grid-cols-8 gap-4 w-full overflow-x-auto border border-red-500">
+    <div className="grid flex gap-4 min-w-[1200px] sm:min-w-[1600px] overflow-x-auto border border-red-500">
       {topLevelNodes.map((node) => (
         <div
           key={node.id}

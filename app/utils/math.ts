@@ -4,6 +4,14 @@
  * Rounds a number to 3 significant figures.
  * Example: 0.041666667 -> 0.042, 0.001736111 -> 0.002
  */
+
+export const roundToSigFigs = (num: number, sigFigs = 3) => {
+  if (num === 0) return 0;
+  const digits = Math.floor(Math.log10(Math.abs(num))) + 1;
+  const factor = Math.pow(10, sigFigs - digits);
+  return Math.round(num * factor) / factor;
+};
+
 export function roundToThreeSignificantFigures(num: number): number {
   if (num === 0) return 0;
   const digits = 3 - Math.floor(Math.log10(Math.abs(num))) - 1;

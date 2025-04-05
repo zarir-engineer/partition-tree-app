@@ -1,12 +1,13 @@
 // utils/distributeValues.ts
 import { TreeNode } from "@/types/TreeNode"; // or wherever your type is
+import { roundToSigFigs } from "./math";
 
-export function distributeValuesRecursively(node: TreeNode): void {
-  if (!node.children || node.children.length === 0) return;
-
-  const share = node.value / node.children.length;
-  node.children.forEach((child) => {
-    child.value = parseFloat(share.toPrecision(3)); // 3 significant figures
-    distributeValuesRecursively(child);
-  });
+export function distributeValue(node: TreeNode) {
+  if (node.children.length === 0) return;
+  const childValue = node.value / node.children.length;
+  node.children = node.children.map((child) => ({
+    ...child,
+    value: roundToSigFigs(childValue),
+  }));
+  node.children.forEach(distributeValue);
 }

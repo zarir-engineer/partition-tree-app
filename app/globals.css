@@ -1,4 +1,9 @@
 /* globals.css */
+/* Tailwind base styles */
+/*@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*/
 
 /* freezing top level */
 .top-level-container {
