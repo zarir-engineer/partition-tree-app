@@ -8,7 +8,7 @@ export interface TreeGridProps {
   treeData: TreeNode[];
   onUpdateNode: (id: string, updates: Partial<TreeNode>) => void;
   onAddChild: (parentId: string) => void;
-  onUpdate: (updatedTree: TreeNode[]) => void; // ✅ Add this line
+  onUpdate: (updatedTree: TreeNode[]) => void;
 }
 
 export const TreeGrid: React.FC<TreeGridProps> = ({
@@ -24,13 +24,22 @@ export const TreeGrid: React.FC<TreeGridProps> = ({
     'parmeshwar',
     'pratapchand',
     'jagdish',
-    'laxmibai',
+    'aaji',
   ];
 
+  // ✅ Filter top-level nodes in correct order
+  const topLevelNodes = topLevelKeys
+    .map((id) => treeData.find((node) => node.id === id))
+    .filter((node): node is TreeNode => !!node);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 p-4 w-full">
-      {treeData.map((node) => (
-        <div key={node.id} className="min-w-[180px] max-w-[250px]">
+//     <div className="grid grid-cols-8 gap-4 w-full overflow-x-auto">
+    <div className="grid grid-cols-8 gap-4 w-full overflow-x-auto border border-red-500">
+      {topLevelNodes.map((node) => (
+        <div
+          key={node.id}
+          className="min-w-[180px] max-w-[250px] border border-gray-200 p-2 rounded"
+        >
           <TreeColumn
             node={node}
             onUpdateNode={onUpdateNode}
